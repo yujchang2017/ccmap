@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ page_title }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='tailwind.css') }}">
+  <style>
+    body {
+      background-color: #fff;
+      font-family: 'Noto Sans TC', sans-serif;
+      color: #333;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    .page-wrapper {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content {
+      flex: 1;
+      /* 讓中間內容撐開 */
+    }
+
+    .main-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    .area-header {
+      color: #333;
+      text-align: center;
+      padding: 1rem 0;
+      font-weight: 800;
+      font-size: 1.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      border: 4px solid;
+      background-color: #fff;
+    }
+
+
+    .env-header {
+      background: #87c789;
+      color: #fff;
+    }
+
+    .soc-header {
+      background: #66bfe8;
+      color: #fff;
+    }
+
+    .eco-header {
+      background: #e3739a;
+      color: #fff;
+    }
+
+    .card-concept {
+      border: none;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-concept:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    .panel-light,
+    .panel-dark {
+      color: #fff;
+    }
+
+    .env-light {
+      background: #87c789;
+    }
+
+    .env-dark {
+      background: #307652;
+    }
+
+    .soc-light {
+      background: #66bfe8;
+    }
+
+    .soc-dark {
+      background: #0e5f84;
+    }
+
+    .eco-light {
+      background: #e3739a;
+    }
+
+    .eco-dark {
+      background: #7b366c;
+    }
+
+    .card-concept ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .card-concept li {
+      position: relative;
+      padding-left: 1.4em;
+      margin-bottom: 0.3em;
+    }
+
+    .card-concept li::before {
+      font-family: "Font Awesome 6 Free";
+      content: "\f105";
+      font-weight: 900;
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 1em;
+      color: #ffffffcc;
+    }
+
+    .card-concept a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .card-concept a:hover {
+      text-decoration: underline;
+    }
+
+    .navbar-custom {
+      background-color: #01814a;
+    }
+
+    /* 如果想保留 Font Awesome 圖標，請把這段保留 */
+    .card-concept li::before {
+      content: "\f105";
+      /* ➤ 的圖標 */
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 1em;
+      color: #ffffffcc;
+    }
+  </style>
+</head>
+
+
+<body class="text-gray-800">
+  <!-- Sticky -->
+  <header class="sticky top-0 z-50 bg-[#070f41] shadow-md">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">    <a href="/" class="flex items-center text-white font-semibold text-xl">
+      <img src="{{ url_for('static', filename='media/home-button.png') }}" class="h-8 mr-2" alt="Logo" />
+      氣候變遷教育資源整合查詢系統
+    </a>
+      <nav class="space-x-6 hidden md:block">
+        <a href="/concepts" class="text-white hover:underline">關鍵概念</a>
+        <a href="/material" class="text-white hover:underline">教學包</a>
+        <a href="/search" class="text-white hover:underline">學習地圖</a>
+        <a href="https://cqgame20-859cd0cbb9e2.herokuapp.com/" class="text-white hover:underline" target="_blank" rel="noopener noreferrer">自主學習</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Banner-->
+  <section class="relative w-full h-[250px] overflow-hidden">
+    <img src="{{ url_for('static', filename='media/banner1.png') }}" alt="背景圖"
+      class="absolute inset-0 w-full h-full object-cover" />
+    <!-- 半透明遮罩 -->
+    <div class="absolute inset-0 bg-black/40"></div>
+
+    <!-- 文字內容 -->
+    <div class="relative z-10 max-w-6xl mx-auto px-6 py-24 text-white">
+      <h1 class="text-center main-title text-4xl md:text-5xl font-bold mb-6">
+        氣候變遷關鍵概念
+      </h1>
+    </div>
+  </section>
+
+  <div class="container py-4">
+    <div class="row mb-3 text-center">
+      <div class="col-md-4">
+        <div class="area-header env-header">環境面向</div>
+      </div>
+      <div class="col-md-4">
+        <div class="area-header soc-header">社會面向</div>
+      </div>
+      <div class="col-md-4">
+        <div class="area-header eco-header">經濟面向</div>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card card-concept panel-light env-light">
+          <div class="card-body">
+            <h5 class="card-title text-2xl font-bold">氣候科學</h5>
+            <ul>
+              {% for t in concepts['氣候科學'] %}
+              <li><a href="{{ url_for('topic_detail', topic_label=t.topic_label) }}">{{ t.topic_prefix }}{{
+                  t.topic_label
+                  }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <div class="card card-concept panel-dark env-dark">
+          <div class="card-body">
+            <h5 class="card-title text-2xl font-bold">生態系與生物多樣性</h5>
+            <ul>
+              {% for t in concepts['生態系與生物多樣性'] %}
+              <li><a href="{{ url_for('topic_detail', topic_label=t.topic_label) }}">{{ t.topic_prefix }}{{
+                  t.topic_label
+                  }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-concept panel-light soc-light">
+          <div class="card-body">
+            <h5 class="card-title text-2xl font-bold">氣候正義</h5>
+            <ul>
+              {% for t in concepts['氣候正義'] %}
+              <li><a href="{{ url_for('topic_detail', topic_label=t.topic_label) }}">{{ t.topic_prefix }}{{
+                  t.topic_label
+                  }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% if concepts['韌性建構'] %}
+        <div class="card card-concept panel-dark soc-dark">
+          <div class="card-body">
+            <h5 class="card-title text-2xl font-bold">韌性建構</h5>
+            <ul>
+              {% for t in concepts['韌性建構'] %}
+              <li><a href="{{ url_for('topic_detail', topic_label=t.topic_label) }}">{{ t.topic_prefix }}{{
+                  t.topic_label
+                  }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <div class="col-md-4">
+        <div class="card card-concept panel-light eco-light">
+          <div class="card-body">
+            <h5 class="card-title text-2xl font-bold">後碳經濟</h5>
+            <ul>
+              {% for t in concepts['後碳經濟'] %}
+              <li><a href="{{ url_for('topic_detail', topic_label=t.topic_label) }}">{{ t.topic_prefix }}{{
+                  t.topic_label
+                  }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <div class="card card-concept panel-dark eco-dark">
+          <div class="card-body">
+            <h5 class="card-title text-2xl font-bold">永續生活型態</h5>
+            <ul>
+              {% for t in concepts['永續生活型態'] %}
+              <li><a href="{{ url_for('topic_detail', topic_label=t.topic_label) }}">{{ t.topic_prefix }}{{
+                  t.topic_label
+                  }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <footer class="bg-[#070f41] text-white py-8">
+    <div class="max-w-4xl mx-auto text-center space-y-4 flex-grow">
+      <div class="flex justify-center space-x-4">
+        <a href="#"><i class="bi bi-facebook text-xl"></i></a>
+        <a href="#"><i class="bi bi-instagram text-xl"></i></a>
+        <a href="#"><i class="bi bi-youtube text-xl"></i></a>
+      </div>
+      {% include "partials/license_notice.html" %}
+      <p>Copyright © 2025 中小學氣候變遷教育推動計畫 All rights reserved</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

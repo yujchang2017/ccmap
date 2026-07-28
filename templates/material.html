@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>氣候變遷教學包</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='tailwind.css') }}">
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            font-family: "Noto Sans TC", sans-serif;
+            background-color: #fff;
+            color: #444;
+            height: 100%;
+        }
+
+        * {
+            box-sizing: inherit;
+        }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-title {
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 2px;
+            margin-bottom: 2.2rem;
+        }
+
+        .card-type {
+            border: none;
+            border-radius: 1.8rem;
+            background: #fff;
+            box-shadow: 0 8px 20px rgba(158, 130, 230, 0.08), 0 1.5px 5px #e0d8f2;
+            transition: transform 0.2s ease, box-shadow 0.25s;
+            cursor: pointer;
+            min-width: 190px;
+            min-height: 210px;
+            text-align: center;
+            padding: 1.6rem 1.1rem 1rem;
+            margin: 0.7rem;
+            position: relative;
+        }
+
+        .card-type:hover {
+            transform: translateY(-6px) scale(1.035);
+            box-shadow: 0 16px 36px rgba(158, 130, 230, 0.15);
+            border-color: #c084fc;
+            z-index: 2;
+        }
+
+        .icon-box {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.2rem;
+            border-radius: 50%;
+            font-size: 2.5rem;
+            color: #fff;
+            background: linear-gradient(135deg, #a5d8ff 0%, #c084fc 100%);
+            box-shadow: 0 6px 18px rgba(158, 130, 230, 0.1);
+            transition: background 0.3s ease;
+        }
+
+        .card-type:hover .icon-box {
+            background: linear-gradient(135deg, #f9a8d4 0%, #a78bfa 100%);
+        }
+
+        .type-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #7e57c2;
+            margin-bottom: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+        .type-desc {
+            color: #666;
+            font-size: 0.98rem;
+            min-height: 32px;
+        }
+
+        @media (max-width: 767px) {
+            .main-title {
+                font-size: 1.4rem;
+            }
+
+            .card-type {
+                min-width: 140px;
+                min-height: 160px;
+                padding: 1rem 0.3rem 0.5rem;
+            }
+
+            .type-title {
+                font-size: 1.03rem;
+            }
+
+            .icon-box {
+                width: 46px;
+                height: 46px;
+                font-size: 1.25rem;
+            }
+        }
+
+        .learning-map-link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: 2px solid #c084fc;
+            border-radius: 8px;
+            color: #c084fc;
+            font-weight: 600;
+            text-decoration: none;
+            background-color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(160, 138, 250, 0.08);
+        }
+
+        .learning-map-link:hover {
+            background-color: #c084fc;
+            color: white;
+            box-shadow: 0 6px 16px rgba(160, 138, 250, 0.2);
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+    <div class="page-wrapper">
+        <!-- Sticky 導覽列 -->
+        <header class="sticky top-0 z-50 bg-[#070f41] shadow-md">
+            <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+                <a href="/" class="flex items-center text-white font-semibold text-xl">
+                    <img src="{{ url_for('static', filename='media/home-button.png') }}" class="h-8 mr-2" alt="Logo" />
+                    氣候變遷教育資源整合查詢系統
+                </a>
+                <nav class="space-x-6 hidden md:block">
+                    <a href="/concepts" class="text-white hover:underline">關鍵概念</a>
+                    <a href="/material" class="text-white hover:underline">教學包</a>
+                    <a href="/search" class="text-white hover:underline">學習地圖</a>
+                    <a href="https://cqgame20-859cd0cbb9e2.herokuapp.com/" class="text-white hover:underline" target="_blank" rel="noopener noreferrer">自主學習</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Banner 區塊 -->
+        <section class="relative w-full h-[250px] overflow-hidden">
+            <!-- 背景影片 -->
+            <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+                <source src="./static/media/bg-video2.mp4" type="video/mp4" />
+                您的瀏覽器不支援影片播放。
+            </video>
+
+            <!-- 半透明遮罩 -->
+            <div class="absolute inset-0 bg-black/40"></div>
+            <!-- 文字內容 -->
+            <div class="relative z-10 max-w-6xl mx-auto px-6 py-24 text-white">
+                <h1 class="text-center main-title text-4xl md:text-5xl font-bold mb-6">
+                    氣候變遷教學包
+                </h1>
+            </div>
+        </section>
+
+        <div class="h-6 md:h-12"></div>
+        
+        <!-- 卡片區塊 -->
+        <div class="container">
+            <div class="row justify-content-center gx-4 gy-4">
+                {% set type_icon = { 'PPT': ('bi-easel2', '簡報',
+                '課堂簡報，支援說明與知識重點。'), 'lesson_plan':
+                ('bi-journal-richtext', '教案', '詳細教學流程設計與學習活動。'),
+                'curriculum': ('bi-collection', '課程', '系列教學主題的完整單元。'),
+                'game': ('bi-controller', '遊戲', '寓教於樂的互動桌遊或線上遊戲。'),
+                'activity': ('bi-people', '活動', '動手實作與體驗型學習活動。'),
+                'video': ('bi-film', '影片', '影音教材，含紀錄片、微課等。') } %} {%
+                for t, tlabel in types %}
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2 d-flex justify-content-center">
+                    <a href="{{ url_for('type_list', type_name=t) }}" class="card-type text-decoration-none"
+                        tabindex="0">
+                        <div class="icon-box">
+                            <i class="bi {{ type_icon[t][0] }}"></i>
+                        </div>
+                        <div class="type-title">{{ type_icon[t][1] }}</div>
+                        <div class="type-desc">{{ type_icon[t][2] }}</div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="h-6 md:h-12"></div>
+
+        <!-- Footer（貼底） -->
+        <footer class="bg-[#070f41] text-white py-8 mt-auto">
+            <div class="max-w-4xl mx-auto text-center space-y-4">
+                <div class="flex justify-center space-x-4">
+                    <a href="#"><i class="bi bi-facebook text-xl"></i></a>
+                    <a href="#"><i class="bi bi-instagram text-xl"></i></a>
+                    <a href="#"><i class="bi bi-youtube text-xl"></i></a>
+                </div>
+                {% include "partials/license_notice.html" %}
+                <p>Copyright © 2025 中小學氣候變遷教育推動計畫 All rights reserved</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

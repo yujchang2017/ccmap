@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+    <head>
+        <meta charset="UTF-8" />
+        <title>氣候變遷教育資源整合查詢系統</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- Tailwind CSS CDN -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='tailwind.css') }}">
+        <!-- Bootstrap Icons -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+            rel="stylesheet" />
+    </head>
+
+    <body class="bg-white text-gray-800">
+        <!-- Sticky -->
+        <header class="sticky top-0 z-50 bg-[#070f41] shadow-md">
+            <div
+                class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+                <a href="/"
+                    class="flex items-center text-white font-semibold text-xl">
+                    <img
+                        src="{{ url_for('static', filename='media/home-button.png') }}"
+                        class="h-8 mr-2"
+                        alt="Logo" />
+                    氣候變遷教育資源整合查詢系統
+                </a>
+                <nav class="space-x-6 hidden md:block">
+                    <a href="/concepts"
+                        class="text-white hover:underline">關鍵概念</a>
+                    <a href="/material"
+                        class="text-white hover:underline">教學包</a>
+                    <a href="/search"
+                        class="text-white hover:underline">學習地圖</a>
+                    <a href="https://cqgame20-859cd0cbb9e2.herokuapp.com/" class="text-white hover:underline" target="_blank" rel="noopener noreferrer">自主學習</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Banner-->
+        <section class="relative w-full h-[400px] overflow-hidden">
+            <!-- 背景影片 -->
+            <video
+                autoplay
+                muted
+                loop
+                playsinline
+                class="absolute inset-0 w-full h-full object-cover">
+                <source src="./static/media/bg-video.mp4" type="video/mp4" />
+                您的瀏覽器不支援影片播放。
+            </video>
+
+            <!-- 半透明遮罩 -->
+            <div class="absolute inset-0 bg-black/40"></div>
+
+            <!-- 文字內容 -->
+            <div class="relative z-10 max-w-6xl mx-auto px-6 py-24 text-white">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">
+                    氣候變遷教育資源整合查詢系統
+                </h1>
+                <p class="text-lg md:text-xl mb-6">
+                    探索關鍵概念、學習地圖與教學資源，攜手邁向永續未來！
+                </p>
+                <a
+                    href="/concepts"
+                    class="inline-block text-white font-semibold px-6 py-3 rounded-lg shadow hover:brightness-110"
+                    style="background-color: #070f41">
+                    立即探索
+                </a>
+            </div>
+        </section>
+
+        <!-- 快速入門指南區塊 -->
+        <section class="bg-gradient-to-r from-blue-50 to-green-50 py-10">
+            <div class="max-w-5xl mx-auto px-4">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">🎯 快速入門指南</h2>
+                    <p class="text-gray-600">第一次使用？只需簡單 3 步驟，立即開始探索氣候變遷教育資源！</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- 步驟 1 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <span class="text-2xl font-bold text-blue-600">1</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-center mb-2">選擇學習階段</h3>
+                        <p class="text-gray-600 text-sm text-center">在「學習地圖」中選擇適合的年段（國小中年級、高年級或國中）</p>
+                    </div>
+                    <!-- 步驟 2 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <span class="text-2xl font-bold text-green-600">2</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-center mb-2">設定查詢條件</h3>
+                        <p class="text-gray-600 text-sm text-center">選擇領域與細分內容，或直接輸入想查詢的主題關鍵字</p>
+                    </div>
+                    <!-- 步驟 3 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <span class="text-2xl font-bold text-yellow-600">3</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-center mb-2">探索教學資源</h3>
+                        <p class="text-gray-600 text-sm text-center">查看相關的關鍵概念、素養目標，並取得推薦的教學資源</p>
+                    </div>
+                </div>
+                <div class="text-center mt-8">
+                    <a href="/search" class="inline-flex items-center bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg shadow transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        開始使用學習地圖
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white py-10">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">📚 功能模組</h2>
+                    <p class="text-gray-600">探索系統的四大核心功能</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- 卡片 1 -->
+                    <a href="/concepts">
+                        <div
+                            class="relative h-64 bg-cover bg-center rounded-lg overflow-hidden shadow-lg
+                            transition duration-300 ease-in-out transform hover:brightness-150
+                            hover:shadow-2xl cursor-pointer"
+                            style="background-image: url('./static/media/concept.jpg')">
+                            <div
+                                class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6">
+                                <h3
+                                    class="text-white text-3xl font-bold">氣候變遷關鍵概念</h3>
+                                <p
+                                    class="text-white text-sm mt-1">協助教師掌握氣候變遷教育的知識結構與架構。</p>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 卡片 2 -->
+                    <a href="/search">
+                        <div
+                            class="relative h-64 bg-cover bg-center rounded-lg overflow-hidden shadow-lg
+                            transition duration-300 ease-in-out transform hover:brightness-150
+                            hover:shadow-2xl cursor-pointer"
+                            style="background-image: url('./static/media/map.jpg')">
+                            <div
+                                class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6">
+                                <h3
+                                    class="text-white text-3xl font-bold">氣候變遷學習地圖</h3>
+                                <p
+                                    class="text-white text-sm mt-1">可依年段與議題查找對應之素養目標與學習內容。</p>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 卡片 3 -->
+                    <a href="/material">
+                        <div
+                            class="relative h-64 bg-cover bg-center rounded-lg overflow-hidden shadow-lg
+                            transition duration-300 ease-in-out transform hover:brightness-150
+                            hover:shadow-2xl cursor-pointer"
+                            style="background-image: url('./static/media/material.jpg')">
+                            <div
+                                class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6">
+                                <h3
+                                    class="text-white text-3xl font-bold">氣候變遷教學包</h3>
+                                <p
+                                    class="text-white text-sm mt-1">提供可直接應用於教學現場的圖文、影片與課程設計。</p>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 卡片 4 -->
+                    <a href="https://cqgame20-859cd0cbb9e2.herokuapp.com/" target="_blank" rel="noopener noreferrer">
+                        <div
+                            class="relative h-64 bg-cover bg-center rounded-lg overflow-hidden shadow-lg
+                            transition duration-300 ease-in-out transform hover:brightness-150
+                            hover:shadow-2xl cursor-pointer"
+                            style="background-image: url('./static/media/learning.jpg')">
+                            <div
+                                class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6">
+                                <h3
+                                    class="text-white text-3xl font-bold">自主學習體驗專區</h3>
+                                <p
+                                    class="text-white text-sm mt-1">推薦適合學生的影片、網站與互動素材進行探究式學習。</p>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-[#070f41] text-white py-8">
+            <div class="max-w-4xl mx-auto text-center space-y-4">
+                <div class="flex justify-center space-x-4">
+                    <a href="#"><i class="bi bi-facebook text-xl"></i></a>
+                    <a href="#"><i class="bi bi-instagram text-xl"></i></a>
+                    <a href="#"><i class="bi bi-youtube text-xl"></i></a>
+                </div>
+                {% include "partials/license_notice.html" %}
+                <p>Copyright © 2025 中小學氣候變遷教育推動計畫 All rights reserved</p>
+            </div>
+        </footer>
+    </body>
+</html>

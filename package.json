@@ -1,0 +1,13 @@
+{
+  "name": "ccmap",
+  "version": "1.0.0",
+  "description": "CCMAP - Climate Change Curriculum Map. Build tooling for Tailwind CSS only; the application itself is Python/Flask (see requirements.txt).",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build:css": "tailwindcss -i static/tailwind.input.css -o static/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}

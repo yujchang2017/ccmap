@@ -1,0 +1,31 @@
+# Environment / secrets
+.env
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Node
+node_modules/
+
+# Logs and local data
+logs/
+*.log
+
+# Backups / sync artifacts
+*.bak
+*.ffs_db
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Test reports (generated)
+tests/*_report.json

@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "CCMAP: Climate Change Curriculum Map"
+version: 1.0.0
+date-released: 2026-07-28
+license: MIT
+repository-code: "https://github.com/yujchang2017/ccmap"
+authors:
+  - family-names: "Chang"
+    given-names: "Yu-Jie"          
+    email: "yujchang@gmail.com"
+    # affiliation: "University of Taipei"
+keywords:
+  - climate change education
+  - curriculum mapping
+  - semantic search
+  - UNESCO Greening Curriculum Guidance
+  - education for sustainable development
+abstract: >-
+  CCMAP is a Flask-based web platform that localizes the key ideas and
+  learning outcomes of UNESCO's Greening Curriculum Guidance (2024) into
+  Traditional Chinese, maps them onto Taiwan's 12-Year Basic Education
+  curriculum, and recommends related teaching resources via semantic search
+  over precomputed text embeddings.

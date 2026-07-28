@@ -1,0 +1,1063 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ page_title }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='tailwind.css') }}">
+  <style>
+    body {
+      font-size: 1.1rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    .table thead th {
+      color: #fff;
+      border: 2px solid #edeaea;
+      font-size: 1.1rem;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0.75rem;
+    }
+
+    .table-bordered th,
+    .table-bordered td {
+      border: 2px solid #edeaea;
+      vertical-align: top;
+      padding: 0.75rem;
+    }
+
+    .keyidea-row td {
+      background-color: #e8f5e9;
+      font-weight: 600;
+      font-size: 1rem;
+      border: 2px solid #edeaea;
+    }
+
+    .keyidea-row td strong {
+      color: #388e3c;
+    }
+
+    mark.highlight {
+      background-color: yellow;
+      font-weight: bold;
+      padding: 0 2px;
+    }
+
+    #scrollTopBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 99;
+      font-size: 18px;
+      border: none;
+      outline: none;
+      background-color: #070f41;
+      color: white;
+      cursor: pointer;
+      padding: 10px 15px;
+      border-radius: 4px;
+    }
+
+    #scrollTopBtn:hover {
+      background-color: #070f41;
+    }
+
+    select.form-select,
+    input.form-control {
+      min-width: 160px;
+    }
+
+    label {
+      white-space: nowrap;
+    }
+
+    td ul li {
+      list-style-type: none;
+      position: relative;
+      padding-left: 1.2em;
+    }
+
+    td ul li::before {
+      content: "●";
+      position: absolute;
+      left: 0;
+      color: #333;
+    }
+
+    /* 表格中 <li> 的基本排版樣式 */
+    tbody ul {
+      list-style-type: disc;
+      /* 使用實心黑點 */
+      padding-left: 1.5rem;
+      /* 留白縮排 */
+      margin: 0;
+      text-align: left;
+      /* 列點文字靠左 */
+    }
+
+    tbody li {
+      margin-bottom: 0.3rem;
+      /* 每列之間留空 */
+      line-height: 1.5;
+      /* 行高好讀 */
+    }
+
+    .climate-link {
+      background-color: #c8c8c9;
+      color: #fff;
+      border: 2px solid #ffffff;
+      transition: all 0.3s ease;
+    }
+
+    .climate-link:hover {
+      background-color: #fff;
+      color: #070f41;
+      border-color: #070f41;
+      box-shadow: 0 0 8px rgba(7, 15, 65, 0.3);
+    }
+
+    .climate-link:hover i {
+      color: #070f41;
+    }
+
+    /* 資源列表樣式 */
+    .resource-container {
+      border-left: 4px solid #070f41;
+      background-color: #f8f9fa;
+    }
+
+    .resource-content table {
+      margin: 0;
+      background-color: white;
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      display: table !important;
+    }
+
+    .resource-content table.table-bordered {
+      border: 1px solid #dee2e6;
+    }
+
+    .resource-content table.table-bordered th,
+    .resource-content table.table-bordered td {
+      border: 1px solid #dee2e6;
+    }
+
+    .resource-content table thead {
+      display: table-header-group !important;
+    }
+
+    .resource-content table thead.table-light {
+      background-color: #f8f9fa;
+    }
+
+    .resource-content table th {
+      background-color: #070f41;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .resource-content table tbody {
+      display: table-row-group !important;
+    }
+
+    .resource-content table tbody tr {
+      display: table-row !important;
+    }
+
+    .resource-content table th,
+    .resource-content table td {
+      display: table-cell !important;
+    }
+
+    .resource-content table td {
+      padding: 0.6rem;
+      vertical-align: middle;
+    }
+
+    .resource-content table tbody tr:hover {
+      background-color: #e8f4f8;
+    }
+
+    .resource-content table .badge {
+      padding: 0.35em 0.65em;
+      font-size: 0.85em;
+    }
+
+    .resource-content table .text-muted {
+      color: #6c757d !important;
+      font-style: italic;
+    }
+
+    .resource-filters {
+      background-color: #fff;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .resource-filters label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .filter-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      background-color: #070f41;
+      color: white;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      margin-right: 0.5rem;
+    }
+
+    /* 回報按鈕樣式 */
+    .report-resource-btn {
+      transition: all 0.2s ease;
+    }
+
+    .report-resource-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Modal 樣式優化 */
+    .modal-header {
+      background-color: #070f41;
+      color: white;
+    }
+
+    .modal-header .btn-close {
+      filter: invert(1);
+    }
+
+    .modal-footer .btn-primary {
+      background-color: #070f41;
+      border-color: #070f41;
+    }
+
+    .modal-footer .btn-primary:hover {
+      background-color: #050a2e;
+      border-color: #050a2e;
+    }
+
+    /* 簡介展開/收合樣式 */
+    .toggle-description {
+      cursor: pointer;
+      font-size: 0.85em;
+      text-decoration: none;
+    }
+
+    .toggle-description:hover {
+      text-decoration: underline;
+    }
+
+    .description-short,
+    .description-full {
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body class="text-gray-800">
+  <!-- Sticky header -->
+  <header class="sticky top-0 z-50 bg-[#070f41] shadow-md">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+      <a href="/" class="flex items-center text-white font-semibold text-xl">
+        <img src="{{ url_for('static', filename='media/home-button.png') }}" class="h-8 mr-2" alt="Logo" />
+        氣候變遷教育資源整合查詢系統
+      </a>
+      <nav class="space-x-6 hidden md:block">
+        <a href="/concepts" class="text-white hover:underline">關鍵概念</a>
+        <a href="/material" class="text-white hover:underline">教學包</a>
+        <a href="/search" class="text-white hover:underline">學習地圖</a>
+        <a href="https://cqgame20-859cd0cbb9e2.herokuapp.com/" class="text-white hover:underline" target="_blank" rel="noopener noreferrer">自主學習</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container my-5">
+
+
+    <!-- 搜尋與篩選 -->
+    <div class="bg-white p-4 rounded-lg shadow-md mb-4 d-flex flex-wrap justify-center gap-3">
+      <div class="flex items-center gap-2">
+        <label for="filterStage" class="font-medium text-gray-700">學習階段：</label>
+        <select class="form-select w-auto" id="filterStage">
+          <option value="all">所有階段</option>
+          {% for age in detail.keys() %}
+          <option value="{{ age }}">{{ age }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="searchInput" class="font-medium text-gray-700">關鍵字：</label>
+        <input type="text" class="form-control w-auto" id="searchInput" placeholder="搜尋文字..." />
+      </div>
+    </div>
+
+    <!-- 主題標題區塊 -->
+    <div class="{{ concept_color_class }} p-4 rounded-md shadow-md mb-5 text-center"
+      style="background-color: {{ header_bg_color }};">
+      <h2 class="text-3xl font-bold drop-shadow-md" style="color: {{ header_text_color }};">
+        {{ topic_label }}
+      </h2>
+    </div>
+
+
+    <!-- 表格區塊 -->
+    <table class="table table-bordered align-middle text-center">
+      <thead style="background-color: {{ header_bg_color }}; color: {{ header_text_color }};">
+        <tr>
+          <th style="width: 100px; background-color: {{ header_bg_color }}; color: {{ header_text_color }};">學習階段</th>
+          <th style="background-color: {{ header_bg_color }}; color: {{ header_text_color }};">認知</th>
+          <th style="background-color: {{ header_bg_color }}; color: {{ header_text_color }};">社會和情感</th>
+          <th style="background-color: {{ header_bg_color }}; color: {{ header_text_color }};">行為</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for age, ki_list in detail.items() %}
+        {% for info in ki_list %}
+        <tr class="keyidea-row" data-age="{{ age }}">
+          <td rowspan="2" class="text-center align-middle" style="background-color: #f0f0f0; font-weight: bold;">
+            {{ age }}
+          </td>
+          <td colspan="3" class="text-start"
+            style="background-color: {{ header_text_color }}; color: {{ header_bg_color }};">
+            <strong style="background-color: {{ header_text_color }}; color: {{ header_bg_color }};">主要觀點KEY
+              IDEA：</strong>{{ info.keyidea }}
+            <button 
+              class="btn btn-sm fw-bold d-inline-flex align-items-center climate-link view-resources-btn"
+              data-keyidea="{{ info.keyidea }}"
+              data-age="{{ age }}">
+              查看素材 <i class="fas fa-list ms-2"></i>
+            </button>
+          </td>
+        </tr>
+        <!-- 資源列表容器 (初始隱藏) -->
+        <tr class="resource-row" data-keyidea="{{ info.keyidea }}" style="display: none;">
+          <td colspan="4" class="p-0">
+            <div class="resource-container p-3" style="background-color: #f8f9fa;">
+              <div class="resource-loading" style="display: none;">
+                <div class="text-center py-3">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">載入中...</span>
+                  </div>
+                  <p class="mt-2 text-muted">正在載入素材...</p>
+                </div>
+              </div>
+              <div class="resource-content"></div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <ul class="mb-0 ps-3">
+              {% for out in info['認知的'] %}
+              <li>{{ out }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+          <td>
+            <ul class="mb-0 ps-3">
+              {% for out in info['社交和情感'] %}
+              <li>{{ out }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+          <td>
+            <ul class="mb-0 ps-3">
+              {% for out in info['行為'] %}
+              <li>{{ out }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+
+
+    <button onclick="scrollToTop()" id="scrollTopBtn" title="回到最上面">↑</button>
+  </div>
+
+  <!-- 回報 Modal -->
+  <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportModalLabel">資源回報</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="report-resource-identifier">
+          <div class="mb-3">
+            <label for="report-issue" class="form-label fw-semibold">問題類型</label>
+            <select id="report-issue" class="form-select" required>
+              <option value="broken_link">連結失效</option>
+              <option value="wrong_category">分類錯誤</option>
+              <option value="inappropriate_content">內容不當</option>
+              <option value="outdated_info">資訊過時</option>
+              <option value="other">其他</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="report-comment" class="form-label fw-semibold">詳細說明 <span id="comment-required" class="text-muted">(選填)</span></label>
+            <textarea id="report-comment" class="form-control" rows="3" placeholder="如有需要，可補充說明..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" id="submit-report">送出回報</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const filterStage = document.getElementById("filterStage");
+    const searchInput = document.getElementById("searchInput");
+    const rows = document.querySelectorAll("tbody tr");
+    const scrollBtn = document.getElementById("scrollTopBtn");
+    let searchTimeout = null; // 防抖計時器
+
+    filterStage.addEventListener("change", filterTable);
+    
+    // 使用防抖機制處理搜索輸入
+    searchInput.addEventListener("input", function() {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+      searchTimeout = setTimeout(filterTable, 200);
+    });
+
+    function filterTable() {
+      const stage = filterStage.value;
+      const keyword = searchInput.value.trim().toLowerCase();
+
+      // 只處理 keyidea-row（不包括 resource-row）
+      const keyideaRows = document.querySelectorAll("tbody tr.keyidea-row");
+      
+      keyideaRows.forEach((headerRow) => {
+        // 移除之前的高亮
+        headerRow.innerHTML = headerRow.innerHTML.replace(/<mark class="highlight">([\s\S]*?)<\/mark>/g, "$1");
+        
+        // 找到對應的內容行（下一個 tr 但不是 resource-row）
+        let contentRow = headerRow.nextElementSibling;
+        while (contentRow && contentRow.classList.contains('resource-row')) {
+          contentRow = contentRow.nextElementSibling;
+        }
+        
+        if (!contentRow) return;
+        
+        // 移除內容行的高亮
+        contentRow.innerHTML = contentRow.innerHTML.replace(/<mark class="highlight">([\s\S]*?)<\/mark>/g, "$1");
+
+        const age = headerRow.getAttribute("data-age");
+        const combinedText = (headerRow.innerText + contentRow.innerText).toLowerCase();
+        const matchStage = stage === "all" || age === stage;
+        const matchKeyword = keyword === "" || combinedText.includes(keyword);
+        const visible = matchStage && matchKeyword;
+
+        headerRow.style.display = visible ? "" : "none";
+        contentRow.style.display = visible ? "" : "none";
+        
+        // 隱藏對應的資源行
+        const keyidea = headerRow.querySelector('.view-resources-btn')?.getAttribute('data-keyidea');
+        if (keyidea) {
+          const resourceRow = document.querySelector(`.resource-row[data-keyidea="${keyidea}"]`);
+          if (resourceRow) {
+            resourceRow.style.display = visible ? "none" : "none"; // 預設隱藏資源行
+          }
+        }
+
+        if (visible && keyword !== "") {
+          highlightKeyword(headerRow, keyword);
+          highlightKeyword(contentRow, keyword);
+        }
+      });
+    }
+
+    function highlightKeyword(element, keyword) {
+      const regex = new RegExp(`(${keyword})`, "gi");
+      element.querySelectorAll("td, li, strong").forEach((el) => {
+        el.innerHTML = el.innerHTML.replace(regex, '<mark class="highlight">$1</mark>');
+      });
+    }
+
+    window.onscroll = () => {
+      scrollBtn.style.display =
+        document.body.scrollTop > 300 || document.documentElement.scrollTop > 300 ? "block" : "none";
+    };
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ===== 新增：查看素材功能 =====
+    // 取得或產生使用者 UUID
+    function getUUID() {
+      let uuid = localStorage.getItem("user_uuid");
+      const uuidPattern = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+      if (!uuid || !uuidPattern.test(uuid)) {
+        if (crypto && crypto.randomUUID) {
+          uuid = crypto.randomUUID();
+        } else {
+          // Fallback: generate UUID v4 format manually
+          uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+        }
+        localStorage.setItem("user_uuid", uuid);
+      }
+      return uuid;
+    }
+
+    // 綁定「查看素材」按鈕事件
+    $(document).ready(function() {
+      $('.view-resources-btn').on('click', function() {
+        const $btn = $(this);
+        const keyidea = $btn.data('keyidea');
+        const age = $btn.data('age');
+        const $resourceRow = $(`.resource-row[data-keyidea="${keyidea}"]`);
+        const $loading = $resourceRow.find('.resource-loading');
+        const $content = $resourceRow.find('.resource-content');
+
+        // 如果已經展開，則收合
+        if ($resourceRow.is(':visible')) {
+          $resourceRow.slideUp();
+          $btn.html('查看素材 <i class="fas fa-list ms-2"></i>');
+          return;
+        }
+
+        // 展開並顯示載入中
+        $resourceRow.show();
+        $loading.show();
+        $content.empty();
+        $btn.html('收合 <i class="fas fa-chevron-up ms-2"></i>');
+
+        // 呼叫 API 取得資源
+        $.ajax({
+          url: '/resources',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            uuid: getUUID(),
+            keyidea: keyidea,
+            lang: 'all',
+            res_type: 'all',
+            source: 'all',
+            age: 'all'
+          }),
+          success: function(resp) {
+            $loading.hide();
+            
+            if (!resp.resources || resp.resources.length === 0) {
+              $content.html(`
+                <div class="alert alert-info mb-0">
+                  <i class="fas fa-info-circle me-2"></i>
+                  目前沒有與「${keyidea}」相關的教學素材。
+                </div>
+              `);
+            } else {
+              // 建立篩選器
+              let filtersHtml = `
+                <div class="resource-filters">
+                  <div class="d-flex align-items-center mb-2">
+                    <i class="fas fa-filter me-2 text-primary"></i>
+                    <strong>篩選器</strong>
+                    <span class="ms-2 text-muted">(找到 ${resp.resources.length} 筆素材)</span>
+                  </div>
+                  <div class="row g-2 align-items-end">
+                    <div class="col-md-2">
+                      <label>語言</label>
+                      <select class="form-select form-select-sm filter-lang">
+                        <option value="all">全部</option>
+                        <option value="cn">中文</option>
+                        <option value="en">英文</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <label>類型</label>
+                      <select class="form-select form-select-sm filter-type">
+                        <option value="all">全部</option>
+                        <option value="PPT">簡報</option>
+                        <option value="video">影片</option>
+                        <option value="game">遊戲</option>
+                        <option value="curriculum">課程</option>
+                        <option value="lesson_plan">教案</option>
+                        <option value="activity">活動</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <label>來源</label>
+                      <select class="form-select form-select-sm filter-source">
+                        <option value="all">全部</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <label>學習階段</label>
+                      <select class="form-select form-select-sm filter-age">
+                        <option value="all">全部</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <button class="btn btn-primary btn-sm w-100 apply-filter-btn">
+                        <i class="fas fa-check me-1"></i>確定篩選
+                      </button>
+                    </div>
+                    <div class="col-md-2">
+                      <button class="btn btn-outline-secondary btn-sm w-100 reset-filter-btn">
+                        <i class="fas fa-redo me-1"></i>重設
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `;
+
+              // 建立資源表格
+              const langMap = { cn: '中文', en: '英文' };
+              const typeMap = { 
+                lesson_plan: '教案', 
+                game: '遊戲', 
+                video: '影片', 
+                PPT: '簡報', 
+                curriculum: '課程', 
+                activity: '活動' 
+              };
+
+              const ADL_LOGIN_NOTE = '素材來源為adl.edu.tw者，是教育部因材網的教學資源。除了少數影片還在建置當中，如果無法觀看影片，請先用因材網帳號登入一次後，再點選網址便可順利觀看影片';
+
+              const updateAdlLoginNote = (resources) => {
+                const list = Array.isArray(resources) ? resources : [];
+                const hasAdl = list.some(r => r && r.URL && String(r.URL).includes('adl.edu.tw'));
+                let $note = $content.find('.adl-login-note');
+
+                if (hasAdl) {
+                  if (!$note.length) {
+                    $content.prepend(`
+                      <div class="adl-login-note alert alert-warning fw-semibold fs-6 py-2 px-3 mb-2" style="display:none;"></div>
+                    `);
+                    $note = $content.find('.adl-login-note');
+                  }
+                  $note.text(ADL_LOGIN_NOTE).show();
+                } else if ($note.length) {
+                  $note.hide();
+                }
+              };
+
+              let tableHtml = `
+                <table class="table table-hover table-sm table-bordered resource-table">
+                  <thead class="table-light">
+                    <tr>
+                      <th style="width: 6%;" class="text-center">語言</th>
+                      <th style="width: 8%;" class="text-center">類型</th>
+                      <th style="width: 20%;">名稱</th>
+                      <th style="width: 25%;">簡介</th>
+                      <th style="width: 12%;" class="text-center">來源網站</th>
+                      <th style="width: 10%;" class="text-center">來源</th>
+                      <th style="width: 8%;" class="text-center">學習階段</th>
+                      <th style="width: 7%;" class="text-center">相似度</th>
+                      <th style="width: 4%;" class="text-center">回報</th>
+                    </tr>
+                  </thead>
+                  <tbody class="resource-tbody">
+              `;
+
+              // 收集所有來源和階段用於篩選器
+              const sources = new Set();
+              const ages = new Set();
+
+              resp.resources.forEach(res => {
+                const langLabel = langMap[res.lang] || res.lang || '-';
+                const typeLabel = typeMap[res.type] || res.type || '-';
+                const name = res.name || '無名稱';
+                const description = res.description || '無描述';
+                const source = res.source || '';
+                const ageLabel = res.age || '';
+                const similarity = res.similarity ? (res.similarity * 100).toFixed(1) + '%' : '-';
+                
+                if (res.source) sources.add(res.source);
+                if (res.age) ages.add(res.age);
+
+                let site = '-';
+                try {
+                  if (res.URL) {
+                    const url = new URL(res.URL);
+                    site = url.hostname;
+                  }
+                } catch (e) {
+                  site = '未知來源';
+                }
+
+                const escapedName = name.replace(/'/g, "\\'");
+                const escapedUrl = (res.URL || '#').replace(/'/g, "\\'");
+
+                // 處理簡介: 預設顯示前50個字
+                const shortDesc = description.length > 50 ? description.substring(0, 50) + '...' : description;
+                const descId = `desc-${res.id || Math.random().toString(36).substr(2, 9)}`;
+
+                tableHtml += `
+                  <tr data-lang="${res.lang || ''}" 
+                      data-type="${res.type || ''}" 
+                      data-source="${res.source || ''}"
+                      data-age="${res.age || ''}">
+                    <td class="text-center">${langLabel}</td>
+                    <td class="text-center">${typeLabel}</td>
+                    <td title="${name}">
+                      ${res.URL ? `<a href="${res.URL}" target="_blank" class="text-decoration-none text-primary">${name.length > 40 ? name.substring(0, 40) + '...' : name}</a>` : name.length > 40 ? name.substring(0, 40) + '...' : name}
+                    </td>
+                    <td>
+                      <span class="description-short" id="${descId}-short">${shortDesc}</span>
+                      <span class="description-full" id="${descId}-full" style="display: none;">${description}</span>
+                      ${description.length > 50 ? `<a href="javascript:void(0)" class="toggle-description text-primary ms-1" data-target="${descId}" style="font-size: 0.85em;">[展開]</a>` : ''}
+                    </td>
+                    <td class="text-center">
+                      ${res.URL ? `<a href="${res.URL}" target="_blank" class="text-decoration-none">${site}</a>` : site}
+                    </td>
+                    <td class="text-center">${source ? source : '<span class="text-muted">-</span>'}</td>
+                    <td class="text-center">${ageLabel ? ageLabel : '<span class="text-muted">-</span>'}</td>
+                    <td class="text-center"><span class="badge bg-success">${similarity}</span></td>
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-outline-warning report-resource-btn" 
+                              data-resource-id="${res.id || ''}" 
+                              data-resource-url="${res.URL || ''}"
+                              data-resource-name="${escapedName}"
+                              title="回報問題">
+                        <i class="fas fa-flag"></i>
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              });
+
+              tableHtml += `
+                  </tbody>
+                </table>
+              `;
+
+              $content.html(filtersHtml + tableHtml);
+              updateAdlLoginNote(resp.resources);
+
+              // 填充來源和階段選項
+              const $sourceFilter = $content.find('.filter-source');
+              const $ageFilter = $content.find('.filter-age');
+              
+              const sortedSources = Array.from(sources).sort();
+              console.log('Available sources:', sortedSources);
+              
+              sortedSources.forEach(s => {
+                $sourceFilter.append(`<option value="${s}">${s}</option>`);
+              });
+              
+              Array.from(ages).sort().forEach(a => {
+                $ageFilter.append(`<option value="${a}">${a}</option>`);
+              });
+
+              // 篩選功能函數
+              const buildTableRows = (resources) => {
+                let rowsHtml = '';
+                resources.forEach(res => {
+                  const langLabel = langMap[res.lang] || res.lang || '-';
+                  const typeLabel = typeMap[res.type] || res.type || '-';
+                  const name = res.name || '無名稱';
+                  const description = res.description || '無描述';
+                  const source = res.source || '';
+                  const ageLabel = res.age || '';
+                  const similarity = res.similarity ? (res.similarity * 100).toFixed(1) + '%' : '-';
+
+                  let site = '-';
+                  try {
+                    if (res.URL) {
+                      const url = new URL(res.URL);
+                      site = url.hostname;
+                    }
+                  } catch (e) {
+                    site = '未知來源';
+                  }
+
+                  const escapedName = (name || '').replace(/'/g, "\\'");
+                  const escapedUrl = (res.URL || '#').replace(/'/g, "\\'");
+                  const shortDesc = description.length > 50 ? description.substring(0, 50) + '...' : description;
+                  const descId = `desc-${res.id || Math.random().toString(36).substr(2, 9)}`;
+
+                  rowsHtml += `
+                    <tr data-lang="${res.lang || ''}" 
+                        data-type="${res.type || ''}" 
+                        data-source="${res.source || ''}"
+                        data-age="${res.age || ''}">
+                      <td class="text-center">${langLabel}</td>
+                      <td class="text-center">${typeLabel}</td>
+                      <td title="${name}">
+                        ${res.URL ? `<a href="${res.URL}" target="_blank" class="text-decoration-none text-primary">${name.length > 40 ? name.substring(0, 40) + '...' : name}</a>` : name.length > 40 ? name.substring(0, 40) + '...' : name}
+                      </td>
+                      <td>
+                        <span class="description-short" id="${descId}-short">${shortDesc}</span>
+                        <span class="description-full" id="${descId}-full" style="display: none;">${description}</span>
+                        ${description.length > 50 ? `<a href="javascript:void(0)" class="toggle-description text-primary ms-1" data-target="${descId}" style="font-size: 0.85em;">[展開]</a>` : ''}
+                      </td>
+                      <td class="text-center">
+                        ${res.URL ? `<a href="${res.URL}" target="_blank" class="text-decoration-none">${site}</a>` : site}
+                      </td>
+                      <td class="text-center">${source ? source : '<span class="text-muted">-</span>'}</td>
+                      <td class="text-center">${ageLabel ? ageLabel : '<span class="text-muted">-</span>'}</td>
+                      <td class="text-center"><span class="badge bg-success">${similarity}</span></td>
+                      <td class="text-center">
+                        <button class="btn btn-sm btn-outline-warning report-resource-btn" 
+                                data-resource-id="${res.id || ''}" 
+                                data-resource-url="${res.URL || ''}"
+                                data-resource-name="${escapedName}"
+                                title="回報問題">
+                          <i class="fas fa-flag"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                });
+
+                return rowsHtml;
+              };
+
+              const fetchAndRenderResources = (filters, topK) => {
+                $loading.show();
+
+                $.ajax({
+                  url: '/resources',
+                  method: 'POST',
+                  contentType: 'application/json',
+                  data: JSON.stringify({
+                    uuid: getUUID(),
+                    keyidea: keyidea,
+                    lang: filters.lang,
+                    res_type: filters.type,
+                    source: filters.source,
+                    age: filters.age,
+                    top_k: topK
+                  }),
+                  success: function(r) {
+                    $loading.hide();
+
+                    const resourcesAll = (r && r.resources) ? r.resources : [];
+                    const displayLimit = 50;
+                    const resources = resourcesAll.slice(0, displayLimit);
+                    const $tbody = $content.find('.resource-tbody');
+
+                    updateAdlLoginNote(resourcesAll);
+
+                    if (!resourcesAll.length) {
+                      $tbody.html('<tr><td colspan="9" class="text-center text-muted py-4">無符合條件的素材（已擴大候選結果仍為 0）</td></tr>');
+                      $content.find('.resource-filters .text-muted').text('(找到 0 筆素材)');
+                      return;
+                    }
+
+                    $tbody.html(buildTableRows(resources));
+                    const suffix = resourcesAll.length > resources.length ? `（僅顯示前 ${resources.length} 筆）` : '';
+                    $content.find('.resource-filters .text-muted').text(`(找到 ${resourcesAll.length} 筆素材${suffix})`);
+                  },
+                  error: function(err) {
+                    $loading.hide();
+                    console.error('Error fetching filtered resources:', err);
+                    const $tbody = $content.find('.resource-tbody');
+                    $tbody.html('<tr><td colspan="9" class="text-center text-danger py-4">篩選失敗，請稍後再試</td></tr>');
+                  }
+                });
+              };
+
+              // 使用事件委派綁定確定篩選按鈕
+              $content.on('click', '.apply-filter-btn', function(e) {
+                e.preventDefault();
+                const filters = {
+                  lang: $content.find('.filter-lang').val(),
+                  type: $content.find('.filter-type').val(),
+                  source: $content.find('.filter-source').val(),
+                  age: $content.find('.filter-age').val()
+                };
+
+                // Re-query with a larger candidate pool so lower-similarity matches can still show up after filtering
+                fetchAndRenderResources(filters, 200);
+              });
+
+              // 使用事件委派綁定重設按鈕
+              $content.on('click', '.reset-filter-btn', function(e) {
+                e.preventDefault();
+                $content.find('.filter-lang').val('all');
+                $content.find('.filter-type').val('all');
+                $content.find('.filter-source').val('all');
+                $content.find('.filter-age').val('all');
+                fetchAndRenderResources({ lang: 'all', type: 'all', source: 'all', age: 'all' }, 20);
+              });
+
+              // 支援 Enter 鍵觸發篩選
+              $content.on('keypress', '.filter-lang, .filter-type, .filter-source, .filter-age', function(e) {
+                if (e.which === 13) {
+                  e.preventDefault();
+                  const filters = {
+                    lang: $content.find('.filter-lang').val(),
+                    type: $content.find('.filter-type').val(),
+                    source: $content.find('.filter-source').val(),
+                    age: $content.find('.filter-age').val()
+                  };
+                  fetchAndRenderResources(filters, 200);
+                }
+              });
+            }
+          },
+          error: function(err) {
+            $loading.hide();
+            console.error('Error fetching resources:', err);
+            $content.html(`
+              <div class="alert alert-danger mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                載入素材時發生錯誤，請稍後再試。
+              </div>
+            `);
+          }
+        });
+      });
+    });
+
+    // ===== 簡介展開/收合功能 =====
+    $(document).on('click', '.toggle-description', function(e) {
+      e.preventDefault();
+      const target = $(this).data('target');
+      const $short = $(`#${target}-short`);
+      const $full = $(`#${target}-full`);
+      const $link = $(this);
+
+      if ($short.is(':visible')) {
+        // 展開
+        $short.hide();
+        $full.show();
+        $link.text('[收合]');
+      } else {
+        // 收合
+        $full.hide();
+        $short.show();
+        $link.text('[展開]');
+      }
+    });
+
+    // ===== 回報功能 =====
+    // 綁定回報按鈕事件
+    $(document).on('click', '.report-resource-btn', function() {
+      const $btn = $(this);
+      const resourceId = $btn.data('resource-id') || $btn.data('resource-url');
+      const resourceName = $btn.data('resource-name');
+      
+      $('#report-resource-identifier').val(resourceId);
+      $('#report-issue').val('broken_link');
+      $('#report-comment').val('');
+      
+      // 更新 modal 標題以顯示資源名稱
+      const displayName = resourceName && resourceName.length > 50 
+        ? resourceName.substring(0, 50) + '...' 
+        : resourceName;
+      $('#reportModalLabel').text(`資源回報：${displayName || '未命名資源'}`);
+      
+      // 顯示 modal
+      $('#reportModal').modal('show');
+    });
+
+    // 根據問題類型更新說明欄位是否必填
+    $('#report-issue').change(function() {
+      const issue = $(this).val();
+      if (issue === 'other') {
+        $('#comment-required').text('(必填)').removeClass('text-muted').addClass('text-danger');
+        $('#report-comment').attr('placeholder', '請詳細描述遇到的問題...');
+      } else {
+        $('#comment-required').text('(選填)').removeClass('text-danger').addClass('text-muted');
+        $('#report-comment').attr('placeholder', '如有需要，可補充說明...');
+      }
+    });
+
+    // 送出回報
+    $('#submit-report').click(function() {
+      const id = $('#report-resource-identifier').val();
+      const issue = $('#report-issue').val();
+      const comment = $('#report-comment').val();
+      
+      if (!id || !issue) {
+        alert('請選擇問題類型');
+        return;
+      }
+      // Only require comment for 'other' issue type
+      if (issue === 'other' && !comment.trim()) {
+        alert('請填寫問題說明');
+        return;
+      }
+      
+      // 送出回報
+      $.ajax({
+        url: '/report',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          uuid: getUUID(),
+          resource_id: String(id),
+          issue: issue,
+          comment: comment || ''
+        }),
+        success: function() {
+          $('#reportModal').modal('hide');
+          alert('回報已送出，感謝您的反饋！');
+          $('#report-comment').val('');
+          // 重設 modal 標題
+          $('#reportModalLabel').text('資源回報');
+        },
+        error: function(err) {
+          console.error('Error submitting report:', err);
+          alert('回報送出失敗，請稍後再試');
+        }
+      });
+    });
+
+    // Modal 關閉時重設標題
+    $('#reportModal').on('hidden.bs.modal', function() {
+      $('#reportModalLabel').text('資源回報');
+      $('#report-comment').val('');
+    });
+  </script>
+
+  <!-- Footer -->
+  <footer class="bg-[#070f41] text-white py-8">
+    <div class="max-w-4xl mx-auto text-center space-y-4 flex-grow">
+      <div class="flex justify-center space-x-4">
+        <a href="#"><i class="bi bi-facebook text-xl"></i></a>
+        <a href="#"><i class="bi bi-instagram text-xl"></i></a>
+        <a href="#"><i class="bi bi-youtube text-xl"></i></a>
+      </div>
+      {% include "partials/license_notice.html" %}
+      <p>Copyright © 2025 中小學氣候變遷教育推動計畫 All rights reserved</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS (需要用於 Modal) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,192 @@
+name: Deploy to Heroku
+
+on:
+  # push:
+  #   branches:
+  #     - main
+  #     - master
+  workflow_dispatch:  # 只允許手動觸發
+
+permissions:
+  contents: write  # 允許推送到儲存庫
+
+jobs:
+  # 檢查是否需要重新計算 embeddings
+  check-data-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      need-precomputation: ${{ steps.changes.outputs.data-changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2  # 獲取前兩個 commit 以比較變更
+
+      - name: Check for data file changes
+        id: changes
+        run: |
+          # 檢查關鍵數據檔案是否有變更
+          if git diff --name-only HEAD^ HEAD | grep -E "(data/maps/map\.csv|data/raw/guidemeta_tw\.csv|data/raw/guidemeta\.csv)" > /dev/null; then
+            echo "data-changed=true" >> $GITHUB_OUTPUT
+            echo "🔄 Data files changed, precomputation needed"
+          else
+            echo "data-changed=false" >> $GITHUB_OUTPUT
+            echo "✅ No data file changes detected"
+          fi
+
+  # 執行預計算（如果需要）
+  precomputation:
+    runs-on: ubuntu-latest
+    needs: check-data-changes
+    if: needs.check-data-changes.outputs.need-precomputation == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run precomputation
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "🚀 Starting precomputation..."
+          python scripts/precomputation_cicd.py
+          echo "✅ Precomputation completed"
+
+      - name: Commit updated embeddings
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/embeddings/
+          if git diff --staged --quiet; then
+            echo "No embedding changes to commit"
+          else
+            git commit -m "chore: Update embeddings after data file changes [skip ci]"
+            git push origin ${{ github.ref_name }}
+          fi
+
+  # 部署到 Heroku
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [check-data-changes, precomputation]
+    if: always() && (needs.precomputation.result == 'success' || needs.precomputation.result == 'skipped')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 獲取完整歷史，以防 precomputation 步驟有 commit
+
+      - name: Pull latest changes (if any)
+        run: git pull origin ${{ github.ref_name }}
+
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.13.15
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: false
+          dontautocreate: true
+
+      - name: Wait for deployment
+        run: |
+          echo "⏳ Waiting for deployment to complete..."
+          sleep 30
+
+      - name: Health check
+        run: |
+          echo "🏥 Performing health check..."
+          APP_URL="${{ secrets.HEROKU_APP_URL }}"
+          HEALTH_URL="$APP_URL/health"
+          
+          echo "🔗 App URL: $APP_URL"
+          echo "🔗 Health URL: $HEALTH_URL"
+          
+          # Wait a bit more for the app to fully start
+          echo "⏳ Waiting for app to fully start..."
+          sleep 45
+          
+          # Try multiple health check attempts
+          MAX_ATTEMPTS=5
+          ATTEMPT=1
+          
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            echo "🔍 Health check attempt $ATTEMPT/$MAX_ATTEMPTS..."
+            
+            # First check the health endpoint if it exists
+            HEALTH_STATUS=$(curl -s --max-time 30 -w "%{http_code}" -o /tmp/health_response "$HEALTH_URL" 2>/dev/null || echo "000")
+            
+            if [ "$HEALTH_STATUS" = "200" ]; then
+              echo "✅ Health check passed - /health endpoint returned 200"
+              cat /tmp/health_response 2>/dev/null || echo ""
+              break
+            else
+              echo "⚠️ Health endpoint status: $HEALTH_STATUS, trying main page..."
+              
+              # Fallback to main page check - just verify app is responding
+              MAIN_STATUS=$(curl -s --max-time 30 -w "%{http_code}" -o /dev/null "$APP_URL" 2>/dev/null || echo "000")
+              
+              if [ "$MAIN_STATUS" = "200" ] || [ "$MAIN_STATUS" = "302" ] || [ "$MAIN_STATUS" = "301" ]; then
+                echo "✅ Health check passed - main page returned $MAIN_STATUS"
+                break
+              else
+                echo "❌ Health check attempt $ATTEMPT failed"
+                echo "   Health endpoint: $HEALTH_STATUS"
+                echo "   Main page: $MAIN_STATUS"
+                
+                if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                  echo "💥 All health check attempts failed"
+                  echo "🔍 App URL: $APP_URL"
+                  echo "🔍 Health URL: $HEALTH_URL"
+                  echo "🔍 Final status codes - Health: $HEALTH_STATUS, Main: $MAIN_STATUS"
+                  
+                  # Show what we actually get back for debugging
+                  echo "📋 Sample response from main page:"
+                  curl -s --max-time 10 "$APP_URL" 2>&1 | head -10
+                  
+                  echo "📋 Sample response from health endpoint:"
+                  curl -s --max-time 10 "$HEALTH_URL" 2>&1 | head -5
+                  
+                  exit 1
+                fi
+              fi
+            fi
+            
+            echo "⏳ Waiting before next attempt..."
+            sleep 15
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "🎉 Deployment successful!"
+            echo "🌐 App URL: ${{ secrets.HEROKU_APP_URL }}"
+          else
+            echo "💥 Deployment failed!"
+            echo "🔍 Check the logs above for details"
+          fi

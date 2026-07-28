@@ -1,0 +1,971 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>氣候變遷學習地圖</title>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='tailwind.css') }}">
+
+  <style>
+    :root {
+      --primary: #2ecc71;
+      --primary-dark: #27ae60;
+      --secondary: #3498db;
+      --accent: #f39c12;
+      --dark: #2c3e50;
+      --light: #ecf0f1;
+      --danger: #e74c3c;
+      --success: #28a745;
+      --info: #17a2b8;
+      --warning: #ffc107;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 1rem;
+      background-color: #f8f9fa;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      background-color: white;
+      border-radius: 12px;
+      border: 2px solid #d1d5db;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      padding: 2rem;
+      margin: 2rem auto;
+    }
+
+    h2 {
+      color: var(--dark);
+      font-weight: 700;
+      position: relative;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h2:after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+      font-size: 0.9rem;
+    }
+
+    .input-label {
+      font-weight: 700;
+      /* 加粗 */
+      font-size: 1.1rem;
+      /* 微調字體大小 */
+      margin-bottom: 0.25rem;
+      display: inline-block;
+    }
+
+    .form-control,
+    .form-select {
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--primary);
+      border-width: 3px;
+      box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(46, 204, 113, 0.25);
+    }
+
+    #progress-container {
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: #e2e8f0;
+    }
+
+    #progress-bar {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      transition: width 0.3s ease;
+    }
+
+    /* 將 Cookie Banner 的樣式從內聯移到這裡 */
+    #cookie-banner {
+      display: none;
+      /* 初始隱藏，由 JS 控制顯示 */
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(52, 152, 219, 0.95);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      z-index: 1000;
+      justify-content: center;
+      /* Flexbox properties for centering content */
+      align-items: center;
+    }
+
+    #accept-cookies {
+      margin-left: 1rem;
+      padding: 0.3rem 0.8rem;
+      border: none;
+      background: white;
+      color: #3498db;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #results {
+      min-height: 100px;
+    }
+
+    .result-card {
+      border-radius: 8px;
+      border: 2px solid #cbd5e1;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+      padding: 1rem;
+    }
+
+    .result-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--secondary);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-content {
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      border-bottom: 2px solid #f1f1f1;
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      border-top: 2px solid #f1f1f1;
+      padding: 1.5rem;
+    }
+
+    .icon-label {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.9rem;
+    }
+
+    .icon-label svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .btn-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .resource-list {
+      margin-top: 1rem;
+      padding-left: 1rem;
+      display: none;
+    }
+
+    .resource-list ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .resource-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    .resource-list a {
+      color: var(--secondary);
+      text-decoration: none;
+    }
+
+    .resource-list a:hover {
+      text-decoration: underline;
+    }
+
+    /* Style for the table within resource-list */
+    .resource-list table {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .resource-list table th,
+    .resource-list table td {
+      padding: 0.5rem;
+      vertical-align: middle;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .resource-list table th {
+      background-color: #f8f9fa;
+      border-bottom: 2px solid #cbd5e1;
+      font-weight: 600;
+    }
+
+    .resource-list table th:last-child,
+    .resource-list table td:last-child {
+      text-align: center;
+      /* Center the report button column */
+    }
+
+    /* 資源篩選器樣式 */
+    .resource-filters {
+      background-color: #fff;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .resource-filters label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .resource-count {
+      font-size: 0.9rem;
+    }
+
+    /* 回報按鈕樣式 */
+    .report-resource {
+      transition: all 0.2s ease;
+    }
+
+    .report-resource:hover {
+      transform: scale(1.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 資源名稱連結樣式 */
+    .resource-list table td a {
+      color: var(--secondary);
+      text-decoration: none;
+    }
+
+    .resource-list table td a:hover {
+      text-decoration: underline;
+      color: var(--primary-dark);
+    }
+
+    /* 表格樣式優化 */
+    .resource-list table {
+      width: 100%;
+      margin-bottom: 1rem;
+      border-collapse: collapse;
+      table-layout: fixed;
+      display: table !important;
+    }
+
+    .resource-list table.table-bordered {
+      border: 1px solid #dee2e6;
+    }
+
+    .resource-list table.table-bordered th,
+    .resource-list table.table-bordered td {
+      border: 1px solid #dee2e6;
+      padding: 0.5rem;
+      vertical-align: middle;
+    }
+
+    .resource-list table thead {
+      display: table-header-group !important;
+    }
+
+    .resource-list table thead.table-light {
+      background-color: #f8f9fa;
+    }
+
+    .resource-list table thead th {
+      font-weight: 600;
+      color: var(--dark);
+      white-space: nowrap;
+    }
+
+    /* 名稱欄位樣式 - 允許換行 */
+    .resource-list table .cell-name {
+      word-break: break-word;
+      overflow-wrap: break-word;
+      max-width: 0;
+      white-space: normal;
+    }
+
+    /* 來源網站欄位樣式 - 允許在任意位置換行 */
+    .resource-list table .cell-source-url {
+      word-break: break-all;
+      overflow-wrap: break-word;
+      max-width: 0;
+      white-space: normal;
+      font-size: 0.85em;
+    }
+
+    .resource-list table tbody {
+      display: table-row-group !important;
+    }
+
+    .resource-list table tbody tr {
+      display: table-row !important;
+    }
+
+    .resource-list table tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .resource-list table th,
+    .resource-list table td {
+      display: table-cell !important;
+    }
+
+    .resource-list table .badge {
+      padding: 0.35em 0.65em;
+      font-size: 0.85em;
+    }
+
+    .resource-list table .text-muted {
+      color: #6c757d !important;
+      font-style: italic;
+    }
+
+    /* 簡介展開/收合樣式 */
+    .toggle-description {
+      cursor: pointer;
+      font-size: 0.85em;
+      text-decoration: none;
+    }
+
+    .toggle-description:hover {
+      text-decoration: underline;
+    }
+
+    .description-short,
+    .description-full {
+      line-height: 1.5;
+    }
+
+    /* Modal 樣式優化 */
+    .modal-header {
+      background-color: var(--dark);
+      color: white;
+    }
+
+    .modal-header .btn-close {
+      filter: invert(1);
+    }
+
+    .modal-footer .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .modal-footer .btn-primary:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+
+      .row>div {
+        margin-bottom: 1rem;
+      }
+    }
+
+    .search-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      /* 圖示與文字間距 */
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 0.6rem 1.2rem;
+    }
+
+    .search-button svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    #results .text-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+
+    #results svg {
+      color: #888;
+    }
+
+    /* 說明按鈕動畫效果 */
+    #helpBtn {
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite;
+    }
+    
+    #helpBtn:hover {
+      transform: scale(1.1);
+      animation: none;
+    }
+    
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(23, 162, 184, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(23, 162, 184, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(23, 162, 184, 0);
+      }
+    }
+    
+    /* 搜尋區塊視覺提示 */
+    .search-section {
+      position: relative;
+    }
+    
+    .search-section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+  </style>
+</head>
+
+<body class="text-gray-800">
+  <!-- Sticky -->
+  <header class="sticky top-0 z-50 bg-[#070f41] shadow-md">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+      <a href="/" class="flex items-center text-white font-semibold text-xl">
+        <img src="{{ url_for('static', filename='media/home-button.png') }}" class="h-8 mr-2" alt="Logo" />
+        氣候變遷教育資源整合查詢系統
+      </a>
+      <nav class="space-x-6 hidden md:block">
+        <a href="/concepts" class="text-white hover:underline">關鍵概念</a>
+        <a href="/material" class="text-white hover:underline">教學包</a>
+        <a href="/search" class="text-white hover:underline">學習地圖</a>
+        <a href="https://cqgame20-859cd0cbb9e2.herokuapp.com/" class="text-white hover:underline" target="_blank" rel="noopener noreferrer">自主學習</a>
+      </nav>
+    </div>
+  </header>
+
+  <div id="cookie-banner">
+    <span>📢 本網站依據個資法規會記錄您的使用資料，為了提升服務品質，我們使用 Cookie。繼續使用即表示您同意。</span>
+    <button id="accept-cookies">
+      我知道了
+    </button>
+  </div>
+
+  <!-- 新手引導對話框 -->
+  <div class="modal fade" id="welcomeGuideModal" tabindex="-1" aria-labelledby="welcomeGuideModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #2ecc71, #3498db); border: none;">
+          <h5 class="modal-title text-white d-flex align-items-center" id="welcomeGuideModalLabel">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-lightbulb me-2" viewBox="0 0 16 16">
+              <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z"/>
+            </svg>
+            歡迎使用氣候變遷學習地圖！
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row g-4">
+            <!-- 步驟 1 -->
+            <div class="col-md-6">
+              <div class="d-flex align-items-start">
+                <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 40px; height: 40px; min-width: 40px; font-weight: bold;">1</div>
+                <div>
+                  <h6 class="fw-bold mb-1">選擇學習階段</h6>
+                  <p class="text-muted small mb-0">根據您的教學對象，選擇「國小低年級」至「高中」共五個階段</p>
+                </div>
+              </div>
+            </div>
+            <!-- 步驟 2 -->
+            <div class="col-md-6">
+              <div class="d-flex align-items-start">
+                <div class="bg-success text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 40px; height: 40px; min-width: 40px; font-weight: bold;">2</div>
+                <div>
+                  <h6 class="fw-bold mb-1">選擇領域</h6>
+                  <p class="text-muted small mb-0">可選擇「國文」、「英文」、「數學」、「社會」、「自然」、「SDG」等 11 個領域</p>
+                </div>
+              </div>
+            </div>
+            <!-- 步驟 3 -->
+            <div class="col-md-6">
+              <div class="d-flex align-items-start">
+                <div class="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 40px; height: 40px; min-width: 40px; font-weight: bold;">3</div>
+                <div>
+                  <h6 class="fw-bold mb-1">選擇主題</h6>
+                  <p class="text-muted small mb-0">系統會根據學習階段與領域提供主題選項，選定後將篩選對應的細分內容（可選「不拘」查看全部）</p>
+                </div>
+              </div>
+            </div>
+            <!-- 步驟 4 -->
+            <div class="col-md-6">
+              <div class="d-flex align-items-start">
+                <div class="bg-info text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 40px; height: 40px; min-width: 40px; font-weight: bold;">4</div>
+                <div>
+                  <h6 class="fw-bold mb-1">選擇細分內容</h6>
+                  <p class="text-muted small mb-0">系統會根據前面的選項自動提供可選的細分內容選項</p>
+                </div>
+              </div>
+            </div>
+            <!-- 步驟 5 -->
+            <div class="col-md-6">
+              <div class="d-flex align-items-start">
+                <div class="bg-warning text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 40px; height: 40px; min-width: 40px; font-weight: bold;">5</div>
+                <div>
+                  <h6 class="fw-bold mb-1">輸入其他內容（選填）</h6>
+                  <p class="text-muted small mb-0">若有特定主題，可直接輸入關鍵字（如：溫室效應、碳足跡）</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <hr class="my-4">
+          
+          <div class="bg-light rounded-3 p-3">
+            <h6 class="fw-bold mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-info-circle me-1" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+              </svg>
+              查詢結果說明
+            </h6>
+            <ul class="small text-muted mb-0">
+              <li>系統將顯示與您搜尋條件最相關的<strong>氣候變遷關鍵概念</strong></li>
+              <li>每個概念會列出對應的<strong>主要觀點 Key Idea</strong>與<strong>學習成果 Learning Outcomes</strong></li>
+              <li>點擊「展開資源」可查看相關的<strong>教學資源</strong>（包含影片、網站、教案等）</li>
+              <li>如發現資源有誤，可點擊「回報」按鈕協助我們改善</li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <div class="form-check me-auto">
+            <input class="form-check-input" type="checkbox" id="dontShowAgain">
+            <label class="form-check-label small text-muted" for="dontShowAgain">下次不再顯示</label>
+          </div>
+          <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal" id="startUsingBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-rocket-takeoff me-1" viewBox="0 0 16 16">
+              <path d="M9.752 6.193c.599.6 1.73.437 2.528-.362.798-.799.96-1.932.362-2.531-.599-.6-1.73-.438-2.528.361-.798.8-.96 1.933-.362 2.532Z"/>
+              <path d="M15.811 3.312c-.363 1.534-1.334 3.626-3.64 6.218l-.24 2.408a2.56 2.56 0 0 1-.732 1.526L8.817 15.85a.51.51 0 0 1-.862-.33l-.5-4.5a.5.5 0 0 1 .15-.404l2.12-2.12a.5.5 0 0 1 .404-.15l4.5.5a.51.51 0 0 1 .33.862l-2.386 2.382a2.56 2.56 0 0 1-1.526.732l-2.408.24c-2.592 2.306-4.684 3.277-6.218 3.64a5.501 5.501 0 0 1-2.27-.164.51.51 0 0 1-.377-.377 5.501 5.501 0 0 1-.164-2.27c.363-1.534 1.334-3.626 3.64-6.218l.24-2.408a2.56 2.56 0 0 1 .732-1.526L4.817 1.15a.51.51 0 0 1 .862.33l.5 4.5a.5.5 0 0 1-.15.404L3.909 8.504a.5.5 0 0 1-.404.15L-.995 8.15a.51.51 0 0 1-.33-.862l2.386-2.382a2.56 2.56 0 0 1 1.526-.732l2.408-.24C7.587 1.628 9.68.657 11.214.294a5.5 5.5 0 0 1 2.27.165.51.51 0 0 1 .377.377 5.5 5.5 0 0 1 .165 2.27c-.099.397-.243.852-.451 1.362-.208.51-.47 1.047-.788 1.604"/>
+            </svg>
+            開始使用
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 固定的說明按鈕 -->
+  <button id="helpBtn" class="btn btn-info position-fixed rounded-circle shadow-lg d-flex justify-content-center align-items-center"
+    style="bottom: 80px; right: 20px; width: 50px; height: 50px; z-index: 1000;"
+    data-bs-toggle="modal" data-bs-target="#welcomeGuideModal"
+    title="使用說明">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-question-lg" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M4.475 5.458c-.284 0-.514-.237-.47-.517C4.28 3.24 5.576 2 7.825 2c2.25 0 3.767 1.36 3.767 3.215 0 1.344-.665 2.288-1.79 2.973-1.1.659-1.414 1.118-1.414 2.01v.03a.5.5 0 0 1-.5.5h-.77a.5.5 0 0 1-.5-.495l-.003-.2c-.043-1.221.477-2.001 1.645-2.712 1.03-.632 1.397-1.135 1.397-2.028 0-.979-.758-1.698-1.926-1.698-1.009 0-1.71.529-1.938 1.402-.066.254-.278.461-.54.461h-.777ZM7.496 14c.622 0 1.095-.474 1.095-1.09 0-.618-.473-1.092-1.095-1.092-.606 0-1.087.474-1.087 1.091S6.89 14 7.496 14Z"/>
+    </svg>
+  </button>
+
+  <div class="container mt-4">
+    <!-- Banner-->
+    <section class="relative w-full h-[250px] overflow-hidden">
+      <img src="{{ url_for('static', filename='media/banner2.png') }}" alt="背景圖"
+        class="absolute inset-0 w-full h-full object-cover" />
+      <!-- 半透明遮罩 -->
+      <div class="absolute inset-0 bg-black/40"></div>
+
+      <!-- 文字內容 -->
+      <div class="relative z-10 max-w-6xl mx-auto px-6 py-24 text-white">
+        <h1 class="text-center main-title text-4xl md:text-5xl font-bold mb-6">
+          氣候變遷學習地圖
+        </h1>
+      </div>
+    </section>
+
+
+    <div class="container search-section mb-4">
+      <div class="d-flex justify-content-center">
+        <div class="row g-3 mb-3 justify-content-center" style="max-width: 1200px;">
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <label for="stage" class="input-label fw-bold fs-6" data-bs-toggle="tooltip"
+              title="選擇學習階段，可查詢對應最接近的關鍵概念。">學習階段</label>
+            <select id="stage" class="form-select">
+              <option value="I">I-國小低年級</option>
+              <option value="II">II-國小中年級</option>
+              <option value="III">III-國小高年級</option>
+              <option value="IV">IV-國中</option>
+              <option value="V">V-高中</option>
+            </select>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <label for="domain" class="input-label fw-bold fs-6" data-bs-toggle="tooltip"
+              title="選擇領域，搭配學習階段查詢關鍵概念。">領域</label>
+            <select id="domain" class="form-select">
+              <option value="國文">國文</option>
+              <option value="英文">英文</option>
+              <option value="數學">數學</option>
+              <option value="社會">社會</option>
+              <option value="自然">自然</option>
+              <option value="藝術">藝術</option>
+              <option value="健康與體育">健康與體育</option>
+              <option value="綜合活動">綜合活動</option>
+              <option value="科技">科技</option>
+              <option value="生活">生活</option>
+              <option value="SDG">SDG</option>
+              <option value="不拘">不拘</option>
+            </select>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <label for="topic" class="input-label fw-bold fs-6" data-bs-toggle="tooltip"
+              title="選擇主題可篩選細分內容，選「不拘」則顯示該領域全部內容。">主題</label>
+            <select id="topic" class="form-select" disabled>
+              <option value="">請先選擇領域</option>
+            </select>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-6">
+            <label for="content" class="input-label fw-bold fs-6" data-bs-toggle="tooltip"
+              title="選擇細分內容，將自動根據學習階段、領域與主題改變選項。">細分內容</label>
+            <select id="content" class="form-select"></select>
+          </div>
+          <div class="col-lg-2 col-md-6 col-sm-6">
+            <label for="additional_input" class="input-label fw-bold fs-6" data-bs-toggle="tooltip"
+              title="可輸入其他主題關鍵字進行查詢。">其他內容</label>
+            <input type="text" id="additional_input" class="form-control" placeholder="可輸入自訂主題" />
+          </div>
+          <div class="col-lg-1 col-md-12 col-sm-12 d-flex align-items-end">
+            <button id="query-btn"
+              class="search-button bg-blue-500 text-white rounded-lg w-100 d-flex align-items-center justify-content-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-search me-1" viewBox="0 0 16 16">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg>
+              查詢
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 查詢進度條 -->
+    <div id="progress-container" class="my-4" style="display: none">
+      <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+        role="progressbar" style="width: 100%; height: 8px;"></div>
+    </div>
+
+    <!-- 查詢中的 spinner 與提示 -->
+    <div id="loading-spinner" class="text-center my-5" style="display: none">
+      <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem">
+        <span class="visually-hidden">查詢中...</span>
+      </div>
+      <p class="mt-3 text-success">資料查詢中，請稍候...</p>
+    </div>
+
+    <!-- 查詢結果或預設提示 -->
+    <div id="results" class="mt-4">
+      <div class="text-center text-muted py-5" id="placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-search mb-3"
+          viewBox="0 0 16 16">
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+        </svg>
+        <p class="fs-5 fw-semibold text-secondary">請設定搜尋條件並點擊查詢按鈕</p>
+        <p class="small text-muted mt-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightbulb me-1" viewBox="0 0 16 16">
+            <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z"/>
+          </svg>
+          提示：選擇學習階段、領域和細分內容後，點擊「查詢」即可開始搜尋相關教學資源
+        </p>
+        <button class="btn btn-outline-info btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#welcomeGuideModal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-question-circle me-1" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+          </svg>
+          查看使用說明
+        </button>
+      </div>
+      <div id="result-content" class="d-none">
+        <!-- 這裡顯示查詢結果 -->
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportModalLabel">資源回報</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="report-resource-identifier">
+          <div class="mb-3">
+            <label for="report-issue" class="form-label fw-semibold">問題類型</label>
+            <select id="report-issue" class="form-select" required>
+              <option value="broken_link">連結失效</option>
+              <option value="wrong_category">分類錯誤</option>
+              <option value="inappropriate_content">內容不當</option>
+              <option value="outdated_info">資訊過時</option>
+              <option value="other">其他</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="report-comment" class="form-label fw-semibold">詳細說明 <span id="comment-required" class="text-muted">(選填)</span></label>
+            <textarea id="report-comment" class="form-control" rows="3" placeholder="如有需要，可補充說明..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" id="submit-report">送出回報</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback Modal 使用者回饋 -->
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header" style="background: linear-gradient(to right, var(--primary), var(--secondary)); color: white;">
+          <h5 class="modal-title" id="feedbackModalLabel">
+            <i class="bi bi-chat-heart me-2"></i>意見回饋與參與調查
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <!-- 整體評分 -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">
+              <i class="bi bi-star me-1"></i>整體滿意度評分
+            </label>
+            <div class="rating-stars d-flex gap-2" id="feedback-rating">
+              <span class="star" data-value="1" style="cursor:pointer; font-size:1.8rem; color:#ddd;">★</span>
+              <span class="star" data-value="2" style="cursor:pointer; font-size:1.8rem; color:#ddd;">★</span>
+              <span class="star" data-value="3" style="cursor:pointer; font-size:1.8rem; color:#ddd;">★</span>
+              <span class="star" data-value="4" style="cursor:pointer; font-size:1.8rem; color:#ddd;">★</span>
+              <span class="star" data-value="5" style="cursor:pointer; font-size:1.8rem; color:#ddd;">★</span>
+            </div>
+            <input type="hidden" id="feedback-rating-value" value="">
+          </div>
+
+          <!-- 回饋類型 -->
+          <div class="mb-3">
+            <label for="feedback-type" class="form-label fw-semibold">
+              <i class="bi bi-tag me-1"></i>回饋類型
+            </label>
+            <select id="feedback-type" class="form-select" required>
+              <option value="">請選擇回饋類型</option>
+              <option value="suggestion">💡 功能建議</option>
+              <option value="bug">🐛 問題回報</option>
+              <option value="praise">👍 使用心得</option>
+              <option value="question">❓ 使用疑問</option>
+              <option value="other">📝 其他</option>
+            </select>
+          </div>
+
+          <!-- 回饋內容 -->
+          <div class="mb-4">
+            <label for="feedback-message" class="form-label fw-semibold">
+              <i class="bi bi-pencil me-1"></i>詳細說明
+            </label>
+            <textarea id="feedback-message" class="form-control" rows="4" 
+                      placeholder="請分享您的使用經驗、建議或遇到的問題..." required></textarea>
+          </div>
+
+          <hr class="my-4">
+
+          <!-- 參與意願調查 -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">
+              <i class="bi bi-people me-1"></i>您是否有興趣參與以下活動？（可複選）
+            </label>
+            <div class="participation-options">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="participate-recommend" value="recommend_materials">
+                <label class="form-check-label" for="participate-recommend">
+                  📚 推薦優質教學素材
+                  <small class="text-muted d-block">協助我們豐富資源庫，分享您發現的好素材</small>
+                </label>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="participate-beta" value="beta_testing">
+                <label class="form-check-label" for="participate-beta">
+                  🧪 參與新功能試用
+                  <small class="text-muted d-block">搶先體驗新功能並提供改進意見</small>
+                </label>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="participate-develop" value="material_development">
+                <label class="form-check-label" for="participate-develop">
+                  ✏️ 參與教學素材開發
+                  <small class="text-muted d-block">與我們一起開發優質的教學資源</small>
+                </label>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="participate-other" value="other">
+                <label class="form-check-label" for="participate-other">
+                  💬 其他參與方式
+                </label>
+              </div>
+            </div>
+            
+            <!-- 其他參與方式說明 (條件顯示) -->
+            <div id="participation-other-container" class="mt-2" style="display:none;">
+              <input type="text" id="participation-other-text" class="form-control" 
+                     placeholder="請說明您想參與的方式...">
+            </div>
+          </div>
+
+          <!-- 聯絡信箱 -->
+          <div class="mb-3">
+            <label for="feedback-email" class="form-label fw-semibold">
+              <i class="bi bi-envelope me-1"></i>聯絡信箱（選填）
+            </label>
+            <input type="email" id="feedback-email" class="form-control" 
+                   placeholder="若您希望收到回覆，請留下信箱">
+            <small class="text-muted">我們僅會用於回覆您的意見或通知您參與活動</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" id="submit-feedback">
+            <i class="bi bi-send me-1"></i>送出回饋
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Feedback Button 浮動回饋按鈕 -->
+  <button id="floating-feedback-btn" class="btn" 
+          style="position: fixed; bottom: 80px; right: 20px; z-index: 1000; 
+                 background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+                 color: white; border-radius: 50px; padding: 12px 20px;
+                 box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+                 transition: all 0.3s ease;"
+          data-bs-toggle="modal" data-bs-target="#feedbackModal">
+    <i class="bi bi-chat-heart me-1"></i>意見回饋
+  </button>
+
+
+  <!-- Footer -->
+  <footer class="bg-[#070f41] text-white py-8">
+    <div class="max-w-4xl mx-auto text-center space-y-4 flex-grow">
+      <div class="flex justify-center space-x-4">
+        <a href="#"><i class="bi bi-facebook text-xl"></i></a>
+        <a href="#"><i class="bi bi-instagram text-xl"></i></a>
+        <a href="#"><i class="bi bi-youtube text-xl"></i></a>
+      </div>
+      {% include "partials/license_notice.html" %}
+      <p>Copyright © 2025 中小學氣候變遷教育推動計畫 All rights reserved</p>
+    </div>
+  </footer>
+</body>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tooltips = {
+      stage: "選擇學習階段，可查詢對應最接近的關鍵概念。",
+      domain: "選擇領域，搭配學習階段查詢關鍵概念。",
+      content: "選擇細分內容，將自動根據學習階段與領域改變選項。",
+      additional_input: "可輸入其他主題關鍵字進行查詢。"
+    };
+
+    for (const id in tooltips) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.setAttribute("data-bs-toggle", "tooltip");
+        el.setAttribute("data-bs-placement", "top");
+        el.setAttribute("title", tooltips[id]);
+      }
+    }
+
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+
+  // 注意：查詢邏輯已移至 script.js 中處理，避免重複綁定事件
+
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/script.js"></script>
+
+</html>
