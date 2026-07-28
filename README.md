@@ -19,6 +19,9 @@ The interface is in Traditional Chinese and targets K-12 teachers,
 pre-service teachers, curriculum designers, and education researchers in
 Taiwan.
 
+**Live demo:** https://cce.tw/search (production instance with the full
+6,700+ item resource index)
+
 ## Features
 
 - **Curriculum mapping** — browse UNESCO key ideas / learning outcomes by
