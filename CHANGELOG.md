@@ -27,4 +27,5 @@ Consolidated from the private development history (2025-10 to 2026-07):
 - Precomputation scripts (`scripts/precomputation.py`, CI/CD variant) and
   GitHub Actions workflows for data updates and Heroku deployment.
 - Test suite for security, rate limiting, API endpoints, and database
-  connectivity (`tests/`).
+  connectivity (`tests/`), plus offline unit tests (`tests/unit/`) run in CI.
+- Dockerfile for one-command deployment and a GitHub Actions test workflow.

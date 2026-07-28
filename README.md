@@ -79,6 +79,13 @@ use the provided `Procfile` / Gunicorn:
 gunicorn -w 1 -b 0.0.0.0:$PORT wsgi:app
 ```
 
+Or with Docker:
+
+```bash
+docker build -t ccmap .
+docker run -p 5000:5000 -e SECRET_KEY=change-me ccmap
+```
+
 ### Environment variables
 
 | Variable | Required | Purpose |
@@ -124,14 +131,20 @@ curriculum or which resources are indexed. To adapt it:
 
 ## Tests
 
+Offline unit tests (no API key, database, or network required — these also run
+in CI on every push):
+
 ```bash
-pytest tests/
+pytest tests/unit
 ```
 
-Most tests are integration tests that expect a running local instance
-(default `http://127.0.0.1:5001`, configurable via `CCMAP_TEST_URL`) and, for
-some, a reachable MongoDB. See `tests/README.md` for prerequisites and the
-scope of each suite.
+They cover input validation and sanitization, similarity computation, and the
+integrity/alignment of the shipped datasets and embeddings.
+
+The remaining suites under `tests/` are integration tests that expect a
+running local instance (default `http://127.0.0.1:5001`, configurable via
+`CCMAP_TEST_URL`) and, for some, a reachable MongoDB. See `tests/README.md`
+for prerequisites and the scope of each suite.
 
 ## Data and licensing
 
