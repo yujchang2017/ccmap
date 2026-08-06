@@ -1,25 +1,47 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-type: software
 title: "CCMAP: Climate Change Curriculum Map"
-version: 1.0.0
-date-released: 2026-07-28
-license: MIT
-repository-code: "https://github.com/yujchang2017/ccmap"
+type: software
 authors:
-  - family-names: "Chang"
-    given-names: "Yu-Jie"          
-    email: "yujchang@gmail.com"
-    # affiliation: "University of Taipei"
+  - family-names: Chang
+    given-names: Yu-Jie
+    email: yujchang@gmail.com
+    affiliation: "Department of Earth and Life Sciences, University of Taipei"
+    orcid: "https://orcid.org/0000-0002-5713-7812"
+  - family-names: Chen
+    given-names: Tzu-Yu
+    affiliation: "E-Service Technology Division, Taiwan Mobile"
+  - family-names: Chang
+    given-names: Chung-Hao
+    affiliation: "Department of Mathematics, Soochow University"
+    orcid: "https://orcid.org/0009-0000-4084-8522"
+  - family-names: Su
+    given-names: Hui-Chun
+    affiliation: "Department of Earth and Life Sciences, University of Taipei"
+  - family-names: Yang
+    given-names: Lan-Chih
+    affiliation: "Department of Earth and Life Sciences, University of Taipei"
+  - family-names: Chen
+    given-names: Willie
+    affiliation: "Department of Earth and Life Sciences, University of Taipei"
+  - family-names: Lin
+    given-names: Huei-Chun
+    affiliation: "Department of Earth and Life Sciences, University of Taipei"
+repository-code: "https://github.com/yujchang2017/ccmap"
+url: "https://cce.tw/search"
+license: MIT
+version: 1.0.0
+date-released: "2026-07-30"
 keywords:
   - climate change education
   - curriculum mapping
   - semantic search
-  - UNESCO Greening Curriculum Guidance
   - education for sustainable development
+  - text embeddings
 abstract: >-
-  CCMAP is a Flask-based web platform that localizes the key ideas and
-  learning outcomes of UNESCO's Greening Curriculum Guidance (2024) into
-  Traditional Chinese, maps them onto Taiwan's 12-Year Basic Education
-  curriculum, and recommends related teaching resources via semantic search
-  over precomputed text embeddings.
+  CCMAP localizes the key ideas and age-banded learning outcomes of UNESCO's
+  Greening Curriculum Guidance (2024) into a national curriculum context
+  (Taiwan implementation) and connects them to teaching resources through
+  embedding-based semantic search over precomputed vectors. UNESCO-derived
+  data are licensed CC BY-SA 3.0 IGO (see data/LICENSE.md); this software is
+  not endorsed by UNESCO.

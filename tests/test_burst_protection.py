@@ -12,7 +12,9 @@ import sys
 # 添加父目錄到路徑以便導入主應用程式
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from main import redis_client
+from app.security import _init_redis_client
+
+redis_client = _init_redis_client()
 
 
 class TestBurstProtection:

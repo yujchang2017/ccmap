@@ -10,8 +10,9 @@ Chinese, maps them onto **Taiwan's 12-Year Basic Education curriculum**
 (11 learning domains plus the UN Sustainable Development Goals), and uses
 semantic search over precomputed text embeddings to recommend relevant
 teaching resources. The production deployment indexes a curated map of
-**6,700+ publicly available materials**; this repository ships a
-**90-item sample index** drawn from government and public-agency sources,
+**6,000+ publicly available materials**; this repository ships a
+**13-item demonstration index** (at least one resource per type) drawn from
+government and public-agency sources,
 together with the scripts to build a full index of your own
 (see [Bringing your own resource index](#adapting-ccmap-to-other-curricula-and-resources)).
 
@@ -125,9 +126,9 @@ curriculum or which resources are indexed. To adapt it:
    language keeping the same columns.
 3. **Resource index**: extend `data/maps/map.csv` (columns: `map_id, old_id,
    type, name, snippet, URL, description, lang, source, age`) with your own
-   resources. The shipped file is a 90-item sample from Taiwanese government
-   and public-agency sources; the production instance runs the same code on
-   a 6,700+ item index.
+   resources. The shipped file is a 13-item demonstration sample (at least one
+   resource per type) from Taiwanese government and public-agency sources; the
+   production instance runs the same code on a 6,000+ item index.
 4. **Embeddings**: run `python scripts/precomputation.py` once to embed the
    new texts (any OpenAI embedding model can be configured via
    `EMBEDDING_MODEL` / `EMBEDDING_DIM`).

@@ -128,10 +128,47 @@ def get_openai_embeddings(texts, model="text-embedding-3-large", batch_size=100)
     return np.vstack(embeddings)
 
 # --- Main Precomputation Logic ---
+def _write_manifest():
+    """輸出 precomputation manifest：輸入檔 md5、模型、維度、列數、產生時間。"""
+    import hashlib
+    import json
+    from datetime import datetime, timezone
+
+    def _md5(path: Path):
+        return hashlib.md5(path.read_bytes()).hexdigest() if path.exists() else None
+
+    def _shape(path: Path):
+        return list(np.load(path).shape) if path.exists() else None
+
+    manifest = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "embedding_model": "text-embedding-3-large",
+        "embedding_dim": 3072,
+        "inputs": {
+            str(p): _md5(p)
+            for p in [MAP_CSV_PATH, GUIDEMETA_CSV_PATH, *DOMAIN_CSV_FILES.values()]
+        },
+        "outputs": {
+            str(DESCRIPTION_EMBEDDING_FILE): _shape(DESCRIPTION_EMBEDDING_FILE),
+            str(KEYIDEA_EMBEDDING_FILE): _shape(KEYIDEA_EMBEDDING_FILE),
+            str(CONTENT_EMBEDDING_FILE): _shape(CONTENT_EMBEDDING_FILE),
+        },
+    }
+    manifest_path = DESCRIPTION_EMBEDDING_FILE.parent / "precomputation_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"Wrote manifest to {manifest_path}.")
+
+
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Precompute corpus embeddings.")
+    parser.add_argument("--force", action="store_true",
+                        help="Recompute embeddings even if output files already exist.")
+    args = parser.parse_args()
+
     # 1. Precompute embeddings for map_df descriptions
-    if DESCRIPTION_EMBEDDING_FILE.exists():
-        print(f"Description embedding file {DESCRIPTION_EMBEDDING_FILE} already exists. Skipping computation.")
+    if DESCRIPTION_EMBEDDING_FILE.exists() and not args.force:
+        print(f"Description embedding file {DESCRIPTION_EMBEDDING_FILE} already exists. Skipping computation (use --force to rebuild).")
     else:
         print(f"Loading map_df from {MAP_CSV_PATH}...")
         try:
@@ -157,8 +194,8 @@ if __name__ == "__main__":
 
     # 2. Precompute embeddings for unique key ideas from guidemeta_df
     # Check if both the embedding file and the texts file exist
-    if KEYIDEA_EMBEDDING_FILE.exists() and UNIQUE_KEYIDEA_TEXTS_FILE.exists():
-        print(f"Keyidea embedding file {KEYIDEA_EMBEDDING_FILE} and texts file {UNIQUE_KEYIDEA_TEXTS_FILE} already exist. Skipping computation.")
+    if KEYIDEA_EMBEDDING_FILE.exists() and UNIQUE_KEYIDEA_TEXTS_FILE.exists() and not args.force:
+        print(f"Keyidea embedding file {KEYIDEA_EMBEDDING_FILE} and texts file {UNIQUE_KEYIDEA_TEXTS_FILE} already exist. Skipping computation (use --force to rebuild).")
     else:
         print(f"Loading guidemeta_df from {GUIDEMETA_CSV_PATH}...")
         try:
@@ -197,8 +234,8 @@ if __name__ == "__main__":
 
     # 3. Precompute embeddings for content across all domain cont.csv files
     # (相似度比對：guidemeta 的 keyidea vs. 各領域 cont.csv 的 content)
-    if CONTENT_EMBEDDING_FILE.exists() and CONTENT_CATALOG_FILE.exists():
-        print(f"Content embedding file {CONTENT_EMBEDDING_FILE} and catalog file {CONTENT_CATALOG_FILE} already exist. Skipping computation.")
+    if CONTENT_EMBEDDING_FILE.exists() and CONTENT_CATALOG_FILE.exists() and not args.force:
+        print(f"Content embedding file {CONTENT_EMBEDDING_FILE} and catalog file {CONTENT_CATALOG_FILE} already exist. Skipping computation (use --force to rebuild).")
     else:
         print("Building content catalog from domain cont.csv files...")
         catalog_rows = []
@@ -249,6 +286,9 @@ if __name__ == "__main__":
                 print("No content embeddings were successfully computed (all-zero result). Not saving files.")
         else:
             print("No content rows found across domain cont.csv files.")
+
+    # 4. Write manifest (inputs hash, model, dims, output shapes, timestamp)
+    _write_manifest()
 
 
     print("Precomputation script finished.")

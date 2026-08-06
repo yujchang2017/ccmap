@@ -298,7 +298,17 @@ class DataLoader:
         if idx is None:
             return None
         return self.content_embeddings[idx]
-        
+
+    def get_keyidea_embedding(self, keyidea: str) -> Optional[np.ndarray]:
+        """依 keyidea 文字查詢預先運算的 keyidea embedding，查無則回 None。"""
+        if self.keyidea_embeddings is None or not self.unique_keyidea_texts:
+            return None
+        try:
+            idx = self.unique_keyidea_texts.index(keyidea)
+        except ValueError:
+            return None
+        return self.keyidea_embeddings[idx]
+
     def is_data_loaded(self) -> bool:
         """Check if essential data is loaded."""
         return (

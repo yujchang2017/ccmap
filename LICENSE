@@ -12,11 +12,6 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-NOTE: This license applies to the source code in this repository. The datasets
-under the data/ directory are subject to separate licensing terms described in
-data/LICENSE.md (including content derived from UNESCO's Greening Curriculum
-Guidance, licensed under CC BY-SA 3.0 IGO).
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE

@@ -150,10 +150,15 @@ class EmbeddingService:
         
         return sorted(keyidea_with_sim, key=lambda x: x[1], reverse=True)[:top_k]
 
-    def find_similar_resources(self, keyidea: str, resource_embeddings: np.ndarray, 
-                              resource_df: pd.DataFrame, top_k: int = 20) -> pd.DataFrame:
-        """Find resources most similar to a keyidea."""
-        keyidea_embedding = self.get_openai_embedding(keyidea)
+    def find_similar_resources(self, keyidea: str, resource_embeddings: np.ndarray,
+                              resource_df: pd.DataFrame, top_k: int = 20,
+                              query_embedding: Optional[np.ndarray] = None) -> pd.DataFrame:
+        """Find resources most similar to a keyidea.
+
+        query_embedding 優先使用預先運算好的 keyidea 向量（免 API）；
+        未提供時才退回即時呼叫 API。"""
+        keyidea_embedding = query_embedding if query_embedding is not None \
+            else self.get_openai_embedding(keyidea)
         if np.all(keyidea_embedding == 0):
             return pd.DataFrame()
 

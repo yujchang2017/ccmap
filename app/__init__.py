@@ -80,7 +80,11 @@ def create_app(config_name: str = 'production') -> Flask:
     
     # Configure CORS with security settings
     configure_cors(app, config_obj)
-    
+
+    # Configure rate limiting + burst protection (production 入口 wsgi:app 也會生效)
+    from app.security import configure_rate_limiting
+    configure_rate_limiting(app)
+
     # Initialize services
     data_loader = DataLoader(config_obj.BASE_PATH, config_obj)
     embedding_service = EmbeddingService(

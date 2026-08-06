@@ -81,17 +81,43 @@ jobs:
                   raise FileNotFoundError(f'Required file missing: {file}')
               print(f'✅ {file} exists')
           
-          # 檢查檔案大小
+          # 檢查形狀：列數需對齊來源 CSV，維度需為 3072（text-embedding-3-large）
+          EXPECTED_DIM = 3072
           desc_emb = np.load('data/embeddings/description_embeddings.npy')
           key_emb = np.load('data/embeddings/keyidea_embeddings.npy')
-          
+
           print(f'📊 Description embeddings shape: {desc_emb.shape}')
           print(f'📊 Keyidea embeddings shape: {key_emb.shape}')
-          
+
           if desc_emb.size == 0 or key_emb.size == 0:
               raise ValueError('Generated embeddings are empty')
-          
-          print('✅ Embedding validation passed')
+
+          for name, emb in [('description', desc_emb), ('keyidea', key_emb)]:
+              if emb.ndim != 2 or emb.shape[1] != EXPECTED_DIM:
+                  raise ValueError(f'{name} embeddings dim mismatch: expected (N, {EXPECTED_DIM}), got {emb.shape}')
+
+          map_rows = len(pd.read_csv('data/maps/map.csv'))
+          if desc_emb.shape[0] != map_rows:
+              raise ValueError(f'description embeddings rows ({desc_emb.shape[0]}) != map.csv rows ({map_rows})')
+
+          unique_keyideas = len(pd.read_csv('data/embeddings/unique_keyidea_texts.csv'))
+          if key_emb.shape[0] != unique_keyideas:
+              raise ValueError(f'keyidea embeddings rows ({key_emb.shape[0]}) != unique_keyidea_texts rows ({unique_keyideas})')
+
+          guidemeta_keyideas = pd.read_csv('data/raw/guidemeta_tw.csv')['keyidea'].nunique()
+          if unique_keyideas != guidemeta_keyideas:
+              raise ValueError(f'unique_keyidea_texts rows ({unique_keyideas}) != guidemeta_tw unique keyideas ({guidemeta_keyideas})')
+
+          if os.path.exists('data/embeddings/content_embeddings.npy'):
+              content_emb = np.load('data/embeddings/content_embeddings.npy')
+              catalog_rows = len(pd.read_csv('data/embeddings/content_catalog.csv'))
+              print(f'📊 Content embeddings shape: {content_emb.shape}')
+              if content_emb.ndim != 2 or content_emb.shape[1] != EXPECTED_DIM:
+                  raise ValueError(f'content embeddings dim mismatch: got {content_emb.shape}')
+              if content_emb.shape[0] != catalog_rows:
+                  raise ValueError(f'content embeddings rows ({content_emb.shape[0]}) != content_catalog rows ({catalog_rows})')
+
+          print('✅ Embedding validation passed (rows aligned, dim = 3072)')
           "
 
       - name: Commit updated embeddings

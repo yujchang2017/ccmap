@@ -239,12 +239,14 @@ class APIController(SecureController):
         if df_filtered.empty or not keyidea:
             return jsonify({"resources": []})
 
-        # 使用 embedding_service 來獲取嵌入和計算相似度
+        # 優先使用預先運算的 keyidea 向量（免 API）；查無此 keyidea 時才即時呼叫 API
+        precomputed_embedding = self.data_loader.get_keyidea_embedding(keyidea)
         similar_resources = self.embedding_service.find_similar_resources(
-            keyidea, 
-            self.data_loader.description_embeddings[valid_filtered_indices], 
-            df_filtered, 
-            top_k=top_k
+            keyidea,
+            self.data_loader.description_embeddings[valid_filtered_indices],
+            df_filtered,
+            top_k=top_k,
+            query_embedding=precomputed_embedding
         )
 
         if similar_resources.empty:
