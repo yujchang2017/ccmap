@@ -21,7 +21,7 @@ pre-service teachers, curriculum designers, and education researchers in
 Taiwan.
 
 **Live demo:** https://cce.tw/search (production instance with the full
-6,700+ item resource index)
+6,000+ item resource index)
 
 ## Features
 
@@ -35,8 +35,8 @@ Taiwan.
   API calls are needed at browse time; an OpenAI API key is only required to
   embed free-text queries.
 - **Resource map** — indexed resources (videos, lesson plans, articles,
-  interactive media) with type / language / age-band metadata; 6,700+ items
-  in the production deployment, 90 sample items in this repository.
+  interactive media) with type / language / age-band metadata; 6,000+ items
+  in the production deployment, 13 demonstration items in this repository.
 - **Anonymous usage analytics** — UUID-based event logging (searches,
   resource clicks) to MongoDB; no personal data is collected.
 - **Hardened by default** — input validation (marshmallow), output
@@ -54,7 +54,7 @@ Flask (MVC)
 ├── config/            environment-based settings (dev / production)
 ├── data/
 │   ├── raw/           UNESCO guidance (zh-TW) + Taiwan curriculum CSVs
-│   ├── maps/map.csv   resource index (90-row public sample)
+│   ├── maps/map.csv   resource index (13-row public demonstration sample)
 │   └── embeddings/    precomputed .npy vectors + catalogs
 ├── scripts/           embedding precomputation, data cleaning
 ├── templates/ static/ Jinja2 + Bootstrap 5 + Tailwind CSS frontend
@@ -159,6 +159,18 @@ for prerequisites and the scope of each suite.
   Taiwan curriculum items come from official Ministry of Education documents;
   the resource map stores only titles, URLs, and short descriptive metadata of
   third-party materials, not the materials themselves.
+
+## Authors
+
+- Yu-Jie Chang (Department of Earth and Life Sciences, University of Taipei) — corresponding author
+- Tzu-Yu Chen (E-Service Technology Division, Taiwan Mobile)
+- Chung-Hao Chang (Department of Mathematics, Soochow University)
+- Hui-Chun Su (Department of Earth and Life Sciences, University of Taipei)
+- Lan-Chih Yang (Department of Earth and Life Sciences, University of Taipei)
+- Willie Chen (Department of Earth and Life Sciences, University of Taipei)
+- Huei-Chun Lin (Department of Earth and Life Sciences, University of Taipei)
+
+See [`CITATION.cff`](CITATION.cff) for the canonical citation metadata.
 
 ## Citation
 
