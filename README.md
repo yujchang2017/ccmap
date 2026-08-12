@@ -165,7 +165,7 @@ for prerequisites and the scope of each suite.
 - Yu-Jie Chang (Department of Earth and Life Sciences, University of Taipei) — corresponding author
 - Tzu-Yu Chen (E-Service Technology Division, Taiwan Mobile)
 - Chung-Hao Chang (Department of Mathematics, Soochow University)
-- Hui-Chun Su (Department of Earth and Life Sciences, University of Taipei)
+- Huei-Jiun Su (Department of Earth and Life Sciences, University of Taipei)
 - Lan-Chih Yang (Department of Earth and Life Sciences, University of Taipei)
 - Willie Chen (Department of Earth and Life Sciences, University of Taipei)
 - Huei-Chun Lin (Department of Earth and Life Sciences, University of Taipei)
