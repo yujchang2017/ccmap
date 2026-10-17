@@ -27,9 +27,6 @@ Development after the study period, not yet published as a public release.
 - English framework source (`data/raw/guidemeta.csv`) and an offline script
   that reproduces Supplementary Table S1 (public commit `487cef3`, 2026-08-06,
   after the `V1.0.0` tag).
-- Lesson-plan and worksheet resource types in labels, filters and material pages.
-- 306 additional lesson-plan, slide and worksheet resources; description
-  embeddings rebuilt (resource index 6,350 -> 6,656).
 - Free-text search as a separate mode on `/search`, with its own optional
   learning-stage filter; free-text-only queries return the top 10 key ideas.
 
@@ -38,9 +35,6 @@ Development after the study period, not yet published as a public release.
   stage filter matches resources whose age field contains the stage.
 - The "any" option was removed from the domain select in condition mode;
   Chinese labels added for article, book, picture-book and podcast types.
-
-### Fixed
-- Age-band metadata of 102 resources for ages 5-8 assigned to Taiwan learning stage I.
 
 Private ref: `32d057d`..`630aac4` (2026-09-26 to 2026-09-27).
 
