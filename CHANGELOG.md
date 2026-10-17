@@ -24,6 +24,9 @@ unless the change is described as such.
 Development after the study period, not yet published as a public release.
 
 ### Added
+- English framework source (`data/raw/guidemeta.csv`) and an offline script
+  that reproduces Supplementary Table S1 (public commit `487cef3`, 2026-08-06,
+  after the `V1.0.0` tag).
 - Lesson-plan and worksheet resource types in labels, filters and material pages.
 - 306 additional lesson-plan, slide and worksheet resources; description
   embeddings rebuilt (resource index 6,350 -> 6,656).
@@ -41,16 +44,15 @@ Development after the study period, not yet published as a public release.
 
 Private ref: `32d057d`..`630aac4` (2026-09-26 to 2026-09-27).
 
-## [1.0.0] - 2026-07-28
+## [1.0.0] - 2026-08-06
 
-First public release (tag `v1.0.0`). It ships a sample resource index (90 items
-at release, reduced to 13 items on 2026-08-06) instead of the full production
-index.
+First public release (tag `V1.0.0`, archived on Zenodo,
+https://doi.org/10.5281/zenodo.21824594). It ships a 13-item sample resource
+index (reduced from 90 items during release preparation) instead of the full
+production index.
 
 ### Added
 - Offline unit tests, a CI test workflow and a Dockerfile.
-- English framework source (`data/raw/guidemeta.csv`) and an offline script
-  that reproduces Supplementary Table S1 (added 2026-08-06).
 
 ### Changed
 - Second-stage resource recommendation uses precomputed key-idea embeddings,
@@ -67,7 +69,7 @@ index.
   non-domestic entries removed (6,358 -> 6,350).
 - License text is standard MIT; data terms moved to `NOTICE.md`.
 
-Public commits: `bcb320e`..`0324d2a`. Private ref (development repository):
+Public commits: `bcb320e`..`4ea7200`. Private ref (development repository):
 `e87e2b4`..`527c124` (2026-07-28 to 2026-07-30).
 
 ## [0.10.0] - 2026-07-22
@@ -317,5 +319,5 @@ First deployed prototype (Flask).
 
 Private ref: `8a1a11d`..`d0d2b25` (2025-03-21 to 2025-03-30).
 
-[Unreleased]: https://github.com/yujchang2017/ccmap/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/yujchang2017/ccmap/releases/tag/v1.0.0
+[Unreleased]: https://github.com/yujchang2017/ccmap/compare/V1.0.0...HEAD
+[1.0.0]: https://github.com/yujchang2017/ccmap/releases/tag/V1.0.0
